@@ -51,7 +51,12 @@ class ContextValue(private val name: String) : Value {
         } else {
             other
         }
-        return when (val value = context[name] ?: return false) {
+        val value = context[name] ?: return false
+        if (comparator == Comparator.Equals && value == otherValue)
+            return true
+        if (comparator == Comparator.NotEquals && value != otherValue)
+            return true
+        return when (value) {
             is String -> {
                 when (otherValue) {
                     is String -> value.compareTo(otherValue, comparator)

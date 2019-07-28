@@ -38,6 +38,7 @@ import blocky.model.expression.Value
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
 import org.antlr.v4.runtime.tree.TerminalNode
@@ -110,7 +111,7 @@ private fun BlockyParser.BlocksContext.addNodes(parent: NodeBuilderContainer) {
 
 private fun BlockyParser.BlockContext.addNodes(parent: NodeBuilderContainer) {
     var block: BlockBuilder? = null
-    children.forEach {
+    children?.forEach {
         when (it) {
             is TerminalNode -> { /* ignore */
             }
@@ -134,6 +135,8 @@ private fun BlockyParser.BlockContext.addNodes(parent: NodeBuilderContainer) {
             }
             is BlockyParser.BlockContentContext -> it.addNodes(block ?: throw IllegalArgumentException())
             is BlockyParser.BlockContext -> it.addNodes(block ?: throw IllegalArgumentException())
+            is BlockyParser.BlockCtxContext -> it.addCtxOrRefNodes(block ?: throw IllegalArgumentException())
+            is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(block ?: throw IllegalArgumentException())
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
     }
@@ -154,6 +157,24 @@ private fun BlockyParser.BlockContentContext.addNodes(parent: BlockBuilder) {
             is BlockyParser.BlockTextContext -> parent.addNode(TextBuilder().apply { text = it.text })
             is BlockyParser.BlockContext -> it.addNodes(parent)
             is BlockyParser.BlockElseContext -> it.addNodes(parent)
+            is BlockyParser.BlockCtxContext -> it.addCtxOrRefNodes(parent)
+            is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(parent)
+            else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
+        }
+    }
+}
+
+private fun ParserRuleContext.addCtxOrRefNodes(parent: BlockBuilder) {
+    val block = BlockBuilder()
+    parent.addNode(block)
+    children.forEach {
+        when (it) {
+            is TerminalNode -> { /* ignore */
+            }
+            is BlockyParser.BlockCtxNameContext -> block.name = it.text
+            is BlockyParser.BlockRefNameContext -> block.name = it.text
+            is BlockyParser.BlockAttributeContext -> it.addTo(block)
+            is BlockyParser.BlockContentContext -> it.addNodes(parent)
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
     }

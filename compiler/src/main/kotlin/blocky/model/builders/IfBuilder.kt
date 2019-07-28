@@ -19,6 +19,7 @@ import blocky.model.ElseBlock
 import blocky.model.IfBlock
 import blocky.model.Node
 import blocky.model.expression.Comparator
+import blocky.model.expression.ContextExpression
 import blocky.model.expression.Expression
 import blocky.model.expression.ExpressionGroup
 import blocky.model.expression.Operator
@@ -29,8 +30,12 @@ class IfBuilder : BlockBuilder() {
 
     var expression: Expression? = null
 
-    override fun newIfBlock(parent: Node, children: List<Node>) =
-        IfBlock(children, expression ?: throw IllegalArgumentException("Expression is required"))
+    override fun newIfBlock(parent: Node, context: String?, children: List<Node>) =
+        IfBlock(
+            children,
+            context?.let { ContextExpression(it) } ?: expression
+                ?: throw IllegalArgumentException("Expression is required")
+        )
 
     override fun newElseBlock(parent: Node, name: String, children: List<Node>) =
         ElseBlock(parent, children, name, expression)

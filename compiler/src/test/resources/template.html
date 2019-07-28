@@ -1,0 +1,56 @@
+{template name="template"}
+{placeholder name="common_page_header"}
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+<link href="https://fonts.googleapis.com/css?family=Anton|Comfortaa|Righteous|Nunito:200,400,700" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/static/minion/semantic/semantic.min.css">
+<link rel="stylesheet" type="text/css" href="/static/minion.css">
+
+<script src="/static/jquery.min.js"></script>
+<script src="/static/minion/semantic/semantic.min.js"></script>
+{/placeholder}
+{placeholder name="page_header"}
+    {ref placeholder="common_page_header"}
+    <title>Donesky Minion</title>
+{/placeholder}
+<!doctype html>
+<html lang="en">
+<head>
+    {ref placeholder="page_header"}
+</head>
+<body>
+<header>
+    <div class="ui container">
+        <h1 class="title"><a href="/">Donesky Minion</a></h1>
+        <div style="float: right;">
+            <div class="ui secondary menu">
+                <div class="right menu">
+                    {if [user != null]}
+                        {if ctx="admin"}
+                            <a class="ui item" href="/admin">Admin</a>
+                        {else}
+                            Not Admin
+                        {/if}
+                        <a class="ui item" href="/minion/logout">Logout</a>
+                    {else}
+                        <a class="ui item" href="/minion/login">Login</a>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="ui container">
+        {ref placeholder="page_body"}
+    </div>
+</main>
+{ref placeholder="page_script_footer"}
+<footer>
+    {ref placeholder="page_footer"}
+</footer>
+</body>
+</html>
+{/template}

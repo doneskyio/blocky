@@ -47,6 +47,24 @@ BLOCK_ELSE
     : BLOCK_ELSE_NAME
     ;
 
+fragment
+BLOCK_CTX_NAME
+    : 'ctx:' BLOCK_NAME
+    ;
+
+BLOCK_CTX
+    : BLOCK_CTX_NAME
+    ;
+
+fragment
+BLOCK_REF_NAME
+    : 'ref'
+    ;
+
+BLOCK_REF
+    : BLOCK_REF_NAME
+    ;
+
 BLOCK_NAME
     : BLOCK_NameStartChar BLOCK_NameChar*
     ;

@@ -29,15 +29,25 @@ blocks
 
 block
     : BLOCK_OPEN blockName blockAttribute* blockExpression* BLOCK_CLOSE blockContent BLOCK_OPEN BLOCK_SLASH blockName BLOCK_CLOSE
-    | BLOCK_OPEN blockName blockAttribute* BLOCK_CLOSE
+    | BLOCK_OPEN blockName blockAttribute* BLOCK_SLASH_CLOSE
+    | blockCtx
+    | blockRef
     ;
 
 blockElse
     : BLOCK_OPEN blockElseName blockExpression* BLOCK_CLOSE blockContent
     ;
 
+blockCtx
+    : BLOCK_OPEN blockCtxName blockAttribute* BLOCK_CLOSE blockContent
+    ;
+
+blockRef
+    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE blockContent
+    ;
+
 blockContent
-    : blockText? ((blockElse | block | BLOCK_COMMENT) blockText?)*
+    : blockText? ((blockElse | blockCtx | blockRef | block | BLOCK_COMMENT) blockText?)*
     ;
 
 blockAttribute
@@ -83,6 +93,14 @@ blockName
 
 blockElseName
     : BLOCK_ELSE
+    ;
+
+blockCtxName
+    : BLOCK_CTX
+    ;
+
+blockRefName
+    : BLOCK_REF
     ;
 
 blockText

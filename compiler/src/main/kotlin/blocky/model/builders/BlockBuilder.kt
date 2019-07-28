@@ -74,7 +74,7 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
             }
             name == "if" -> {
                 val children = mutableListOf<Node>()
-                val block = newIfBlock(parent, children)
+                val block = newIfBlock(parent, attributes["ctx"], children)
                 _children.forEach {
                     children.add(it.build(block))
                 }
@@ -116,7 +116,7 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
         }
     }
 
-    protected open fun newIfBlock(parent: Node, children: List<Node>): IfBlock = TODO()
+    protected open fun newIfBlock(parent: Node, context: String?, children: List<Node>): IfBlock = TODO()
 
     protected open fun newElseBlock(parent: Node, name: String, children: List<Node>): ElseBlock = TODO()
 }

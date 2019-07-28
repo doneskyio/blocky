@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blocky.model
 
-import java.io.OutputStream
+package blocky.model.expression
 
-class PlaceholderRef(private val placeholderRef: String) : Node {
+import blocky.model.Context
 
-    override fun write(context: Context, out: OutputStream) {
-        context.getPlaceholder(placeholderRef)?.write(context, out)
+class ContextExpression(private val name: String) : Expression {
+
+    override val operator = Operator.And
+
+    override fun evaluate(context: Context) =
+        (context[name] as? ExpressionCallback)?.evaluate(context) ?: false
+
+    interface ExpressionCallback {
+
+        fun evaluate(context: Context): Boolean
     }
 }

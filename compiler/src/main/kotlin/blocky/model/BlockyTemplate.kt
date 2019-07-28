@@ -25,14 +25,18 @@ class BlockyTemplate(
 ) : Block(name, children) {
 
     private val placeholders by lazy {
-        children.mapNotNull { it as? Placeholder }
+        children.filterIsInstance<Placeholder>()
+    }
+
+    private val nonPlaceholders by lazy {
+        children.filter { it !is Placeholder }
     }
 
     override fun write(context: Context, out: OutputStream) {
+        placeholders.forEach { context.setPlaceholder(it.name, it) }
         if (parentRef == null) {
-            super.write(context, out)
+            nonPlaceholders.forEach { it.write(context, out) }
         } else {
-            placeholders.forEach { context.setPlaceholder(it.name, it) }
             Blocky[parentRef].write(context, out)
         }
     }

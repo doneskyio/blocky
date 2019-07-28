@@ -19,17 +19,17 @@ import blocky.model.expression.NullValue
 
 class Context(private val context: Map<String, Any?> = emptyMap()) {
 
-    private val placeholders = mutableMapOf<String, Node>()
+    private val placeholders = mutableMapOf<String, Placeholder>()
     private lateinit var parentContext: Context
 
     private constructor(context: Map<String, Any?>, parentContext: Context) : this(context) {
         this.parentContext = parentContext
     }
 
-    internal fun getPlaceholder(name: String): Node = placeholders.getValue(name)
+    internal fun getPlaceholder(name: String): Placeholder? = placeholders[name]
 
-    internal fun setPlaceholder(name: String, node: Node) {
-        placeholders[name] = node
+    internal fun setPlaceholder(name: String, placeholder: Placeholder) {
+        placeholders[name] = placeholder
     }
 
     operator fun get(name: String): Any? {
