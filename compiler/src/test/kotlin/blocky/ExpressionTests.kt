@@ -36,6 +36,27 @@ class ExpressionTests {
         }
 
     @Test
+    fun testContextBoolean1() {
+        val expression = "a == true".expression
+        assertEquals("(a == true)", expression.toString())
+        assertTrue(expression.evaluate(Context(mapOf("a" to true))))
+    }
+
+    @Test
+    fun testContextBoolean2() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        assertTrue(expression.evaluate(Context(mapOf("a" to true, "b" to true))))
+    }
+
+    @Test
+    fun testContextBoolean3() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        assertFalse(expression.evaluate(Context(mapOf("a" to true, "b" to false))))
+    }
+
+    @Test
     fun testBoolean1() {
         val expression = "true == true".expression
         assertEquals("(true == true)", expression.toString())
