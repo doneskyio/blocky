@@ -28,6 +28,8 @@ class Context(private val context: Map<String, Any?> = emptyMap()) {
 
     internal fun getPlaceholder(name: String): Placeholder? = placeholders[name]
 
+    internal fun hasPlaceholder(name: String) = placeholders.containsKey(name)
+
     internal fun setPlaceholder(name: String, placeholder: Placeholder) {
         placeholders[name] = placeholder
     }
