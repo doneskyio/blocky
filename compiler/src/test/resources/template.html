@@ -12,13 +12,13 @@
     <script src="/static/minion/semantic/semantic.min.js"></script>
 [/placeholder]
 [placeholder name="page_header"]
-    [ref placeholder="common_page_header"]
+    [ref:placeholder name="common_page_header"]
     <title>Donesky Minion</title>
 [/placeholder]
 <!doctype html>
 <html lang="en">
 <head>
-    [ref placeholder="page_header"]
+    [ref:placeholder name="page_header"]
 </head>
 <body>
 <header>
@@ -44,12 +44,12 @@
 </header>
 <main>
     <div class="ui container">
-        [ref placeholder="page_body"]
+        [ref:placeholder name="page_body"]
     </div>
 </main>
-[ref placeholder="page_script_footer"]
+[ref:placeholder name="page_script_footer"]
 <footer>
-    [ref placeholder="page_footer"]
+    [ref:placeholder name="page_footer"]
 </footer>
 </body>
 </html>

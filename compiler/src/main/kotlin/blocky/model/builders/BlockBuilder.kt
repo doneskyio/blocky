@@ -15,6 +15,7 @@
  */
 package blocky.model.builders
 
+import blocky.compiler.CompilerException
 import blocky.model.ElseBlock
 import blocky.model.ForBlock
 import blocky.model.IfBlock
@@ -96,16 +97,8 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
                 }
                 block
             }
-            name == "ref" -> {
-                val placeholderRef = attributes["placeholder"]
-                if (placeholderRef != null) {
-                    PlaceholderRef(placeholderRef)
-                } else {
-                    TemplateRef(
-                        attributes["template"] ?: throw IllegalArgumentException("placeholder or template is required.")
-                    )
-                }
-            }
+            name == "ref:template" -> TemplateRef(attributes["name"] ?: throw CompilerException("name is required."))
+            name == "ref:placeholder" -> PlaceholderRef(attributes["name"] ?: throw CompilerException("name is required."))
             name.startsWith(VariableBlock.contextPrefix) -> VariableBlock(
                 name,
                 attributes["format"],

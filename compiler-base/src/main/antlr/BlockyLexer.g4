@@ -19,6 +19,10 @@ BLOCK_COMMENT
     : '[!--' .*? '--]'
     ;
 
+BLOCK_ESCAPE
+    : '[[--' .*? '--]]'
+    ;
+
 SEA_WS
     :  (' '|'\t'|'\r'? '\n')+
     ;
@@ -49,7 +53,7 @@ BLOCK_ELSE
 
 fragment
 BLOCK_CTX_NAME
-    : 'ctx:' BLOCK_NAME
+    : 'ctx:' BLOCK_ATTRIBUTE_NAME
     ;
 
 BLOCK_CTX
@@ -58,7 +62,8 @@ BLOCK_CTX
 
 fragment
 BLOCK_REF_NAME
-    : 'ref'
+    : 'ref:template'
+    | 'ref:placeholder'
     ;
 
 BLOCK_REF
@@ -66,6 +71,13 @@ BLOCK_REF
     ;
 
 BLOCK_NAME
+    : 'template'
+    | 'placeholder'
+    | 'if'
+    | 'for'
+    ;
+
+BLOCK_ATTRIBUTE_NAME
     : [a-zA-Z]+[a-zA-Z0-9]*( '.' [a-zA-Z0-9]*)*
     ;
 

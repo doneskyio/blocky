@@ -137,13 +137,19 @@ private fun BlockyParser.BlockContext.addNodes(parent: NodeBuilderContainer) {
             is BlockyParser.BlockContext -> it.addNodes(block ?: throw IllegalArgumentException())
             is BlockyParser.BlockCtxContext -> it.addCtxOrRefNodes(block ?: throw IllegalArgumentException())
             is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(block ?: throw IllegalArgumentException())
+            is BlockyParser.BlockEscapeContext -> {
+                val textPart = it.text.substring("[[--".length)
+                parent.addNode(TextBuilder().apply {
+                    text = textPart.substring(0, textPart.length - "--]]".length)
+                })
+            }
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
     }
 }
 
 private fun BlockyParser.BlockAttributeContext.addTo(builder: BlockBuilder) {
-    val name = blockAttributeName().BLOCK_NAME().text
+    val name = blockAttributeName().BLOCK_ATTRIBUTE_NAME().text
     val value = blockAttributeValue().ATTVALUE_VALUE().text
     if (builder.attributes.containsKey(name))
         throw CompilerException("Duplicate attribute names: $name")

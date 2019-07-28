@@ -28,10 +28,15 @@ blocks
     ;
 
 block
-    : BLOCK_OPEN blockName blockAttribute* blockExpression* BLOCK_CLOSE blockContent BLOCK_OPEN BLOCK_SLASH blockName BLOCK_CLOSE
+    : blockEscape
+    | BLOCK_OPEN blockName blockAttribute* blockExpression* BLOCK_CLOSE blockContent BLOCK_OPEN BLOCK_SLASH blockName BLOCK_CLOSE
     | BLOCK_OPEN blockName blockAttribute* BLOCK_SLASH_CLOSE
     | blockCtx
     | blockRef
+    ;
+
+blockEscape
+    : BLOCK_ESCAPE
     ;
 
 blockElse
@@ -80,7 +85,7 @@ logicExpression
     ;
 
 blockAttributeName
-    : BLOCK_NAME
+    : BLOCK_ATTRIBUTE_NAME
     ;
 
 blockAttributeValue

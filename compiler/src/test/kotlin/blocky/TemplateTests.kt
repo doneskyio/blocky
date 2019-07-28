@@ -391,7 +391,7 @@ class TemplateTests {
                         """
                         |[template name="template1"]
                         |Hello
-                        |[ref template="template2"]
+                        |[ref:template name="template2"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
@@ -492,7 +492,7 @@ class TemplateTests {
                         """
                         |[template name="template1"]
                         |Hello
-                        |[ref placeholder="content"]
+                        |[ref:placeholder name="content"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
