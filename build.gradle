@@ -78,8 +78,8 @@ allprojects {
                 artifact sourcesJar
 
                 pom {
-                    name = "Minion"
-                    description = "An open source modular web server"
+                    name = "Blocky"
+                    description = "An open source template engine"
                     url = "https://donesky.io/blocky"
                     licenses {
                         license {
@@ -89,7 +89,7 @@ allprojects {
                     }
                     developers {
                         developer {
-                            id = "kylejbrock"
+                            id = "brock"
                             name = "Kyle Brock"
                             email = "brock@donesky.io"
                         }
