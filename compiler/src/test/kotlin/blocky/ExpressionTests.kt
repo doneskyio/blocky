@@ -30,7 +30,7 @@ class ExpressionTests {
 
     private val String.expression: Expression
         get() {
-            val template = Compiler.compile(ByteArrayInputStream("[template name=\"test\"][if [$this]][/if][/template]".toByteArray()))
+            val template = Compiler.compile(ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray()))
             val block = template.children.first() as IfBlock
             return block.expression
         }
