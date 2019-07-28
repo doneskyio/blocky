@@ -8,13 +8,13 @@ Default template (named `default`):
 
 ```html
 [template]
-[placeholder name="body"]
+[placeholder name="body"] [!-- Default placeholders are optional --]
 <div>Default Body</div>
 [/placeholder]
 <html>
 <head><title>Blocky Example</title></head>
 <body>
-[ref:placeholder name="body"]
+[ref:placeholder name="body"] [[-- Escaping [] --]
 </body>
 </html>
 [/template]
@@ -34,3 +34,17 @@ Rendering template:
 val template = Blocky["some-template"]
 template.write(Context(mapOf("somevariable" to "Oh yea")), outputStream)
 ```
+
+Expected output:
+
+```html
+<html>
+<head><title>Blocky Example</title></head>
+<body>
+<div>Some other body: Oh yea</div>  Escaping []
+</body>
+</html>
+```
+
+Want more examples?  Visit the tests: 
+https://github.com/doneskyio/blocky/tree/master/compiler/src/test/kotlin/blocky

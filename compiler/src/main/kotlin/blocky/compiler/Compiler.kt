@@ -162,6 +162,7 @@ private fun BlockyParser.BlockAttributeContext.addTo(builder: BlockBuilder) {
 private fun BlockyParser.BlockContentContext.addNodes(parent: BlockBuilder) {
     children?.forEach {
         when (it) {
+            is TerminalNode -> { /* ignore */ }
             is BlockyParser.BlockTextContext -> parent.addNode(TextBuilder().apply { text = it.text })
             is BlockyParser.BlockContext -> it.addNodes(parent)
             is BlockyParser.BlockElseContext -> it.addNodes(parent)
@@ -177,8 +178,7 @@ private fun ParserRuleContext.addCtxOrRefNodes(parent: BlockBuilder) {
     parent.addNode(block)
     children.forEach {
         when (it) {
-            is TerminalNode -> { /* ignore */
-            }
+            is TerminalNode -> { /* ignore */ }
             is BlockyParser.BlockCtxNameContext -> block.name = it.text
             is BlockyParser.BlockRefNameContext -> block.name = it.text
             is BlockyParser.BlockAttributeContext -> it.addTo(block)

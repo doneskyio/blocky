@@ -533,6 +533,59 @@ class TemplateTests {
         """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testComment() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(
+            """
+        |[template]
+        |[!-- Some comment --]
+        |Hello
+        |[/template]
+        """.trimMargin()
+        )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("dt" to BigDecimal("100.00")))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testComment - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |Hello
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testEscapedContent() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(
+            """
+        |[template]
+        |[!-- Some comment --]
+        |Hello [[--[][][][][blah][][][]--]]
+        |[/template]
+        """.trimMargin()
+        )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("dt" to BigDecimal("100.00")))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testComment - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |Hello [][][][][blah][][][]
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)
