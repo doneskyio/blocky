@@ -109,7 +109,7 @@ private fun Number.compareTo(other: Number): Int = when (this) {
     is Float -> compareTo(other.toFloat())
     is Long -> compareTo(other.toLong())
     is Double -> compareTo(other.toDouble())
-    else -> TODO("Unsupported ${this} compareTo $other")
+    else -> TODO("Unsupported $this compareTo $other")
 }
 
 private fun Number.compareTo(other: Number, comparator: Comparator) = when (comparator) {

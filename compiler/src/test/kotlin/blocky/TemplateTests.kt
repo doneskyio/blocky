@@ -29,7 +29,8 @@ import kotlin.test.assertEquals
 
 class TemplateTests {
 
-    val template1 = """
+    val template1 =
+        """
         |{template name="tpl1"}
         |<html>
         |<head>
@@ -62,7 +63,8 @@ class TemplateTests {
         |{/template}
         """.trimMargin()
 
-    val template2 = """
+    val template2 =
+        """
         |{template name="tpl2"}
         |{if [a == b]}
         |Hello
@@ -72,7 +74,8 @@ class TemplateTests {
         |{/template}
         """.trimMargin()
 
-    val template3 = """
+    val template3 =
+        """
         |{template name="tpl3"}
         |{if [a != b]}
         |Hello a != b
@@ -94,7 +97,8 @@ class TemplateTests {
             template.write(context, it)
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |<html>
         |<head>
         |<title>Hello World</title>
@@ -116,7 +120,8 @@ class TemplateTests {
             template.write(context, it)
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |<html>
         |<head>
         |<title>Hello World</title>
@@ -139,7 +144,8 @@ class TemplateTests {
             template.write(context, it)
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |<html>
         |<head>
         |<title>Hello World</title>
@@ -162,7 +168,8 @@ class TemplateTests {
             template.write(context, it)
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello Else
         |
         """.trimMargin()
@@ -181,7 +188,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello
         |
         """.trimMargin()
@@ -200,7 +208,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello Else a == b
         |
         """.trimMargin()
@@ -219,7 +228,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello a != b
         |
         """.trimMargin()
@@ -238,7 +248,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Else!
         |
         """.trimMargin()
@@ -266,7 +277,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |1 
         |2 
         |
@@ -295,7 +307,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |name1 
         |name2 
         |
@@ -324,7 +337,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |nestedname1 
         |nestedname2 
         |
@@ -355,7 +369,8 @@ class TemplateTests {
             println("Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |nestedname1 
         |
         """.trimMargin()
@@ -401,7 +416,8 @@ class TemplateTests {
             println("testTemplate8 - Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello
         |World
         |nestedname1 
@@ -430,7 +446,8 @@ class TemplateTests {
             println("testTemplate9 - Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |${SimpleDateFormat("MM/dd/yy").format(dt)}
         """.trimMargin()
         assertEquals(expected, content)
@@ -454,7 +471,8 @@ class TemplateTests {
             println("testTemplate10 - Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |$100.00
         """.trimMargin()
         assertEquals(expected, content)
@@ -501,7 +519,8 @@ class TemplateTests {
             println("testTemplate8 - Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
-        val expected = """
+        val expected =
+            """
         |Hello
         |World
         |nestedname1 

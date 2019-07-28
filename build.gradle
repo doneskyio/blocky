@@ -130,7 +130,7 @@ allprojects {
                 pom {
                     name = "Minion"
                     description = "An open source modular web server"
-                    url = "https://donesky.io/minion"
+                    url = "https://donesky.io/blocky"
                     licenses {
                         license {
                             name = "The Apache License, Version 2.0"
@@ -145,8 +145,8 @@ allprojects {
                         }
                     }
                     scm {
-                        connection = "scm:git:git://git.donesky.dev/donesky/minion.git"
-                        developerConnection = "scm:git:git://git.donesky.dev/donesky/minion.git"
+                        connection = "scm:git:git://git.donesky.dev/donesky/blocky.git"
+                        developerConnection = "scm:git:git://git.donesky.dev/donesky/blocky.git"
                         url = "https://donesky.dev"
                     }
                 }
@@ -183,8 +183,4 @@ allprojects {
             include("**/src/**")
         }
     }
-}
-
-task startPostgres(type: Exec) {
-    commandLine "${rootProject.projectDir}/scripts/start-postgres.sh"
 }

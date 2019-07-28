@@ -17,7 +17,7 @@ package blocky.model
 
 import java.io.OutputStream
 
-class PlaceholderRef(private val placeholderRef: String): Node {
+class PlaceholderRef(private val placeholderRef: String) : Node {
 
     override fun write(context: Context, out: OutputStream) {
         val placeholder = context.getPlaceholder(placeholderRef)

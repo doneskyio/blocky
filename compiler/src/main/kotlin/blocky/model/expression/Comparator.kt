@@ -23,7 +23,7 @@ enum class Comparator(private val comparator: String) {
     LessThan("<"),
     LessThanEquals("<=");
 
-    override fun toString(): String{
+    override fun toString(): String {
         return comparator
     }
 }

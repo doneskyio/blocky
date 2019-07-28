@@ -19,7 +19,7 @@ enum class Operator(private val operator: String) {
     And("&&"),
     Or("||");
 
-    override fun toString(): String{
+    override fun toString(): String {
         return operator
     }
 }

@@ -18,7 +18,7 @@ package blocky.model
 import blocky.Blocky
 import java.io.OutputStream
 
-class TemplateRef(private val templateRef: String): Node {
+class TemplateRef(private val templateRef: String) : Node {
 
     override fun write(context: Context, out: OutputStream) {
         val template = Blocky[templateRef]
