@@ -34,7 +34,7 @@ object Build : BuildType({
     steps {
         gradle {
             name = "Test Blocky"
-            tasks = "clean ktlintCheck startPostgres test"
+            tasks = "clean ktlintCheck test"
             enableStacktrace = true
             gradleParams = "--no-daemon"
             dockerImage = "build-server:latest"
