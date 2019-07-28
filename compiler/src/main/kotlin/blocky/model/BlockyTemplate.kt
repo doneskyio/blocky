@@ -20,9 +20,8 @@ import java.io.OutputStream
 
 class BlockyTemplate(
     children: List<Node>,
-    name: String,
     private val parentRef: String?
-) : Block(name, children) {
+) : Block("template", children) {
 
     private val placeholders by lazy {
         children.filterIsInstance<Placeholder>()

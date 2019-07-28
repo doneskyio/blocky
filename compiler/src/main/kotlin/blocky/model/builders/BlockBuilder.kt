@@ -54,8 +54,7 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
             name == "template" -> {
                 if (parent == RootBuilder.root) {
                     val children = mutableListOf<Node>()
-                    val templateName = attributes.getValue("name")
-                    val block = BlockyTemplate(children, templateName, attributes["parent"])
+                    val block = BlockyTemplate(children, attributes["parent"])
                     _children.forEach {
                         children.add(it.build(block))
                     }

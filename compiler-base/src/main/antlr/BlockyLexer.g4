@@ -66,7 +66,7 @@ BLOCK_REF
     ;
 
 BLOCK_NAME
-    : BLOCK_NameStartChar BLOCK_NameChar*
+    : [a-zA-Z]+[a-zA-Z0-9]*( '.' [a-zA-Z0-9]*)*
     ;
 
 BLOCK_WHITESPACE
@@ -94,28 +94,6 @@ DIGIT
     : [0-9]
     ;
 
-fragment
-BLOCK_NameChar
-    : BLOCK_NameStartChar
-    | '-'
-    | '_'
-    | '.'
-    | DIGIT
-    |   '\u00B7'
-    |   '\u0300'..'\u036F'
-    |   '\u203F'..'\u2040'
-    ;
-
-fragment
-BLOCK_NameStartChar
-    :   [:a-zA-Z]
-    |   '\u2070'..'\u218F'
-    |   '\u2C00'..'\u2FEF'
-    |   '\u3001'..'\uD7FF'
-    |   '\uF900'..'\uFDCF'
-    |   '\uFDF0'..'\uFFFD'
-    ;
-
 mode ATTVALUE;
 
 ATTVALUE_VALUE
@@ -124,14 +102,10 @@ ATTVALUE_VALUE
 
 ATTRIBUTE
     : DOUBLE_QUOTE_STRING
-    | SINGLE_QUOTE_STRING
     ;
 
 fragment DOUBLE_QUOTE_STRING
     : '"' ~[<"]* '"'
-    ;
-fragment SINGLE_QUOTE_STRING
-    : '\'' ~[<']* '\''
     ;
 
 mode EXPRESSION;
