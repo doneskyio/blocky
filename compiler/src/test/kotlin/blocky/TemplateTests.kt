@@ -24,10 +24,14 @@ import java.io.InputStream
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Date
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TemplateTests {
+
+    @BeforeTest
+    fun flushCache() = Blocky.flushCache()
 
     val template1 =
         """
@@ -516,7 +520,7 @@ class TemplateTests {
         val content = ByteArrayOutputStream().use {
             val x = System.currentTimeMillis()
             template.write(context, it)
-            println("testTemplate8 - Write MS: ${System.currentTimeMillis() - x}")
+            println("testTemplate11 - Write MS: ${System.currentTimeMillis() - x}")
             it.toString()
         }
         val expected =

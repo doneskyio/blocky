@@ -36,6 +36,8 @@ object Blocky {
         return compiledTemplate!!
     }
 
+    fun remove(template: String) = cache.remove(template)
+
     fun getFormatter(name: String): BlockyFormatter = formatters.getValue(name)
     fun setFormatter(name: String, formatter: BlockyFormatter) {
         formatters[name] = formatter
@@ -46,4 +48,6 @@ object Blocky {
         this["date"] = DateFormatter()
         this["currency"] = CurrencyFormatter()
     }
+
+    fun flushCache() = cache.clear()
 }
