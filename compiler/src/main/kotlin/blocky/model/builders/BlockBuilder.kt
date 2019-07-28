@@ -19,7 +19,10 @@ import blocky.model.ElseBlock
 import blocky.model.ForBlock
 import blocky.model.IfBlock
 import blocky.model.Node
-import blocky.model.Template
+import blocky.model.BlockyTemplate
+import blocky.model.Placeholder
+import blocky.model.PlaceholderRef
+import blocky.model.TemplateRef
 import blocky.model.VariableBlock
 
 open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
@@ -52,7 +55,7 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
                 if (parent == RootBuilder.root) {
                     val children = mutableListOf<Node>()
                     val templateName = attributes.getValue("name")
-                    val block = Template(children, templateName)
+                    val block = BlockyTemplate(children, templateName, attributes["parent"])
                     _children.forEach {
                         children.add(it.build(block))
                     }
@@ -60,6 +63,14 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
                 } else {
                     TODO()
                 }
+            }
+            name == "placeholder" -> {
+                val children = mutableListOf<Node>()
+                val block = Placeholder(attributes.getValue("name"), children)
+                _children.forEach {
+                    children.add(it.build(block))
+                }
+                block
             }
             name == "if" -> {
                 val children = mutableListOf<Node>()
@@ -86,7 +97,21 @@ open class BlockBuilder : NodeBuilder, NodeBuilderContainer {
                 }
                 block
             }
-            name.startsWith(VariableBlock.contextPrefix) -> VariableBlock(name)
+            name == "ref" -> {
+                val placeholderRef = attributes["placeholder"]
+                if (placeholderRef != null) {
+                    PlaceholderRef(placeholderRef)
+                } else {
+                    TemplateRef(
+                        attributes["template"] ?: throw IllegalArgumentException("placeholder or template is required.")
+                    )
+                }
+            }
+            name.startsWith(VariableBlock.contextPrefix) -> VariableBlock(
+                name,
+                attributes["format"],
+                attributes["args"]
+            )
             else -> throw IllegalArgumentException("Unsupported block: $name")
         }
     }

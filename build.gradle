@@ -33,7 +33,7 @@ def getCurrentVersion() {
     if (tag.length() > 0)
         return tag.trim()
     else
-        return "0.0.7-SNAPSHOT"
+        return "0.0.1-SNAPSHOT"
 }
 
 allprojects {

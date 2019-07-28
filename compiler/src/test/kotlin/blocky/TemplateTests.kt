@@ -18,7 +18,12 @@ package blocky
 
 import blocky.compiler.Compiler
 import blocky.model.Context
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.math.BigDecimal
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -243,13 +248,15 @@ class TemplateTests {
     @Test
     fun testTemplate4() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile("""
+        val template = Compiler.compile(
+            """
         |{template name="fortpl"}
         |{for items="item"}
         |{ctx:item} 
         |{/for}
         |{/template}
-        """.trimMargin())
+        """.trimMargin()
+        )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf("1", "2")
         val context = Context(mapOf("items" to items))
@@ -270,13 +277,15 @@ class TemplateTests {
     @Test
     fun testTemplate5() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile("""
+        val template = Compiler.compile(
+            """
         |{template name="fortpl"}
         |{for items="item"}
         |{ctx:item.name} 
         |{/for}
         |{/template}
-        """.trimMargin())
+        """.trimMargin()
+        )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestObject("name1"), TestObject("name2"))
         val context = Context(mapOf("items" to items))
@@ -297,13 +306,15 @@ class TemplateTests {
     @Test
     fun testTemplate6() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile("""
+        val template = Compiler.compile(
+            """
         |{template name="fortpl"}
         |{for items="item"}
         |{ctx:item.obj.name} 
         |{/for}
         |{/template}
-        """.trimMargin())
+        """.trimMargin()
+        )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
         val context = Context(mapOf("items" to items))
@@ -324,7 +335,8 @@ class TemplateTests {
     @Test
     fun testTemplate7() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile("""
+        val template = Compiler.compile(
+            """
         |{template name="fortpl"}
         |{for items="item"}
         |{if [item.obj.name == "nestedname1"]}
@@ -332,7 +344,8 @@ class TemplateTests {
         |{/if}
         |{/for}
         |{/template}
-        """.trimMargin())
+        """.trimMargin()
+        )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
         val context = Context(mapOf("items" to items))
@@ -344,6 +357,155 @@ class TemplateTests {
         }
         val expected = """
         |nestedname1 
+        |
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate8() {
+        val y = System.currentTimeMillis()
+        Blocky.loader = object : BlockyLoader {
+            override fun load(template: String): InputStream {
+                return ByteArrayInputStream(
+                    if (template == "template1") {
+                        """
+                        |{template name="template1"}
+                        |Hello
+                        |{ref template="template2"}
+                        |Thanks!
+                        |{/template}
+                        """.trimMargin()
+                    } else {
+                        """
+                        |{template name="template2"}
+                        |World
+                        |{for items="item"}
+                        |{if [item.obj.name == "nestedname1"]}
+                        |{ctx:item.obj.name} 
+                        |{/if}
+                        |{/for}
+                        |{/template}
+                        """.trimMargin()
+                    }.toByteArray()
+                )
+            }
+        }
+        val template = Blocky["template1"]
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
+        val context = Context(mapOf("items" to items))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate8 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected = """
+        |Hello
+        |World
+        |nestedname1 
+        |Thanks!
+        |
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate9() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(
+            """
+        |{template name="fortpl"}
+        |{ctx:dt format="date" args="MM/dd/yy"}
+        |{/template}
+        """.trimMargin()
+        )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val dt = Date()
+        val context = Context(mapOf("dt" to dt))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate9 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected = """
+        |${SimpleDateFormat("MM/dd/yy").format(dt)}
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate10() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(
+            """
+        |{template name="fortpl"}
+        |{ctx:dt format="currency"}
+        |{/template}
+        """.trimMargin()
+        )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("dt" to BigDecimal("100.00")))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate10 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected = """
+        |$100.00
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate11() {
+        val y = System.currentTimeMillis()
+        Blocky.loader = object : BlockyLoader {
+            override fun load(template: String): InputStream {
+                return ByteArrayInputStream(
+                    if (template == "template1") {
+                        """
+                        |{template name="template1"}
+                        |Hello
+                        |{ref placeholder="content"}
+                        |Thanks!
+                        |{/template}
+                        """.trimMargin()
+                    } else {
+                        """
+                        |{template name="template2" parent="template1"}
+                        |{placeholder name="content"}
+                        |World
+                        |{for items="item"}
+                        |{if [item.obj.name == "nestedname1"]}
+                        |{ctx:item.obj.name} 
+                        |{/if}
+                        |{/for}
+                        |{/placeholder}
+                        |{/template}
+                        """.trimMargin()
+                    }.toByteArray()
+                )
+            }
+        }
+        val template = Blocky["template2"]
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
+        val context = Context(mapOf("items" to items))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate8 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected = """
+        |Hello
+        |World
+        |nestedname1 
+        |Thanks!
         |
         """.trimMargin()
         assertEquals(expected, content)

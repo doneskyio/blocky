@@ -15,27 +15,12 @@
  */
 package blocky.model
 
-import blocky.Blocky
 import java.io.OutputStream
 
-open class VariableBlock(name: String, private val formatter: String?, private val formatterConfig: String?) : Node {
-
-    private val contextName = name.substring(VariableBlock.contextPrefix.length)
+class PlaceholderRef(private val placeholderRef: String): Node {
 
     override fun write(context: Context, out: OutputStream) {
-        formatter?.let {
-            val formatter = Blocky.getFormatter(it)
-            val output = formatter.format(context, formatterConfig, contextName)
-            out.write(output)
-        } ?: out.write(context[contextName].toString().toByteArray(Charsets.UTF_8))
-    }
-
-    override fun toString(): String {
-        return "Variable(name=$contextName)"
-    }
-
-    companion object {
-
-        const val contextPrefix = "ctx:"
+        val placeholder = context.getPlaceholder(placeholderRef)
+        placeholder.write(context, out)
     }
 }

@@ -15,10 +15,27 @@
  */
 package blocky.model
 
-class Template(
+import blocky.Blocky
+import java.io.OutputStream
+
+class BlockyTemplate(
     children: List<Node>,
-    name: String
+    name: String,
+    private val parentRef: String?
 ) : Block(name, children) {
+
+    private val placeholders by lazy {
+        children.mapNotNull { it as? Placeholder }
+    }
+
+    override fun write(context: Context, out: OutputStream) {
+        if (parentRef == null) {
+            super.write(context, out)
+        } else {
+            placeholders.forEach { context.setPlaceholder(it.name, it) }
+            Blocky[parentRef].write(context, out)
+        }
+    }
 
     override fun toString(): String {
         return "Template name=$name children=$children"

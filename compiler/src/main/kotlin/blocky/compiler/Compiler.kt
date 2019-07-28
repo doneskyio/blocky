@@ -18,7 +18,7 @@ package blocky.compiler
 import blocky.BlockyLexer
 import blocky.BlockyParser
 import blocky.BlockyParserBaseListener
-import blocky.model.Template
+import blocky.model.BlockyTemplate
 import blocky.model.builders.BlockBuilder
 import blocky.model.builders.IfBuilder
 import blocky.model.builders.MutableExpression
@@ -46,10 +46,10 @@ import java.io.InputStream
 
 object Compiler {
 
-    fun compile(`in`: String): Template =
+    fun compile(`in`: String): BlockyTemplate =
         compile(ByteArrayInputStream(`in`.toByteArray(Charsets.UTF_8)))
 
-    fun compile(`in`: InputStream): Template {
+    fun compile(`in`: InputStream): BlockyTemplate {
         val stream = CharStreams.fromStream(`in`)
         val lexer = BlockyLexer(stream)
         val tokenStream = CommonTokenStream(lexer)
@@ -79,14 +79,14 @@ private class ErrorListener : BaseErrorListener() {
 
 private class TemplateParserListenerImpl : BlockyParserBaseListener() {
 
-    lateinit var template: Template
+    lateinit var template: BlockyTemplate
 
     override fun exitTemplate(ctx: BlockyParser.TemplateContext) {
         template = ctx.build()
     }
 }
 
-private fun BlockyParser.TemplateContext.build(): Template {
+private fun BlockyParser.TemplateContext.build(): BlockyTemplate {
     val root = RootBuilder()
     children?.forEach {
         when (it) {

@@ -15,5 +15,35 @@
  */
 package blocky
 
-class Blocky {
+import blocky.compiler.Compiler
+import blocky.formatters.CurrencyFormatter
+import blocky.formatters.DateFormatter
+import blocky.model.BlockyTemplate
+import java.util.concurrent.ConcurrentHashMap
+
+object Blocky {
+
+    lateinit var loader: BlockyLoader
+
+    operator fun get(template: String): BlockyTemplate {
+        var compiledTemplate = cache[template]
+        if (compiledTemplate == null) {
+            loader.load(template).use {
+                compiledTemplate = Compiler.compile(it)
+            }
+            cache[template] = compiledTemplate!!
+        }
+        return compiledTemplate!!
+    }
+
+    fun getFormatter(name: String): BlockyFormatter = formatters.getValue(name)
+    fun setFormatter(name: String, formatter: BlockyFormatter) {
+        formatters[name] = formatter
+    }
+
+    private val cache = ConcurrentHashMap<String, BlockyTemplate>()
+    private val formatters = ConcurrentHashMap<String, BlockyFormatter>().apply {
+        this["date"] = DateFormatter()
+        this["currency"] = CurrencyFormatter()
+    }
 }

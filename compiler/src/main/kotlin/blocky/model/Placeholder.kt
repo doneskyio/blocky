@@ -13,23 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blocky.model.builders
 
-import blocky.model.Context
-import blocky.model.Node
-import blocky.model.BlockyTemplate
-import java.io.OutputStream
+package blocky.model
 
-class RootBuilder : BlockBuilder() {
-
-    init { name = "root" }
-
-    fun build(): BlockyTemplate = build(root) as BlockyTemplate
-
-    companion object {
-
-        internal val root = object : Node {
-            override fun write(context: Context, out: OutputStream) = throw UnsupportedOperationException()
-        }
-    }
-}
+class Placeholder(internal val name: String, children: List<Node>) : AbstractNodeContainer(children)
