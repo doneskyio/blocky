@@ -1,0 +1,190 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://artifacts.donesky.dev/repository/donesky"
+            credentials {
+                username System.getenv("donesky_nexus_username")
+                password System.getenv("donesky_nexus_password")
+            }
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:$ktlint_gradle_version"
+    }
+}
+
+task version {
+    doLast {
+        println project.version
+    }
+}
+
+def getCurrentVersion() {
+    def versionTag = new ByteArrayOutputStream()
+    exec {
+        commandLine "git", "tag", "-l",  "--points-at", "HEAD"
+        standardOutput = versionTag
+    }
+    def tag = versionTag.toString().trim().replaceAll("\r", "").replaceAll("\n", "")
+    if (tag.length() > 0)
+        return tag.trim()
+    else
+        return "0.0.7-SNAPSHOT"
+}
+
+allprojects {
+    group = "donesky.blocky"
+    version = getCurrentVersion()
+
+    repositories {
+        maven {
+            url "https://artifacts.donesky.dev/repository/donesky"
+            credentials {
+                username System.getenv("donesky_nexus_username")
+                password System.getenv("donesky_nexus_password")
+            }
+        }
+    }
+
+    if (name == "compiler-base")
+        return
+
+    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "maven-publish"
+    apply plugin: "kotlinx-serialization"
+    apply plugin: "jacoco"
+    apply plugin: "org.jetbrains.dokka"
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+
+    dependencies {
+        compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+        compile("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+        compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version")
+        compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutine_version")
+
+        compile("ch.qos.logback:logback-classic:$logback_version")
+
+        testCompile("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+        testCompile("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_12
+    }
+
+    jacoco {
+        toolVersion = "0.8.3"
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            allWarningsAsErrors = true
+            freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental"]
+        }
+    }
+
+    ext.moduleName = "donesky.${project.name}"
+
+    compileJava {
+        inputs.property("moduleName", moduleName)
+        doFirst {
+            options.compilerArgs = [
+                    "--module-path", classpath.asPath
+            ]
+            classpath = files()
+        }
+    }
+
+    task sourcesJar(type: Jar) {
+        from project.file("src")
+        archiveClassifier = 'sources'
+    }
+
+    task javadocJar(type: Jar) {
+        from javadoc
+        archiveClassifier = 'javadoc'
+    }
+
+    javadoc {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = project.group
+                artifactId = project.name
+                version = project.version
+
+                from components.java
+                artifact sourcesJar
+
+                pom {
+                    name = "Minion"
+                    description = "An open source modular web server"
+                    url = "https://donesky.io/minion"
+                    licenses {
+                        license {
+                            name = "The Apache License, Version 2.0"
+                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = "kylejbrock"
+                            name = "Kyle Brock"
+                            email = "brock@donesky.io"
+                        }
+                    }
+                    scm {
+                        connection = "scm:git:git://git.donesky.dev/donesky/minion.git"
+                        developerConnection = "scm:git:git://git.donesky.dev/donesky/minion.git"
+                        url = "https://donesky.dev"
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = version.endsWith('SNAPSHOT') ? "https://artifacts.donesky.dev/repository/snapshots" : "https://artifacts.donesky.dev/repository/internal"
+                credentials {
+                    username System.getenv("donesky_nexus_username")
+                    password System.getenv("donesky_nexus_password")
+                }
+            }
+        }
+    }
+
+    dokka {
+        outputFormat = "kotlin-website"
+        outputDirectory = "$buildDir/docs"
+        reportUndocumented = false
+    }
+
+    ktlint {
+        version = "$ktlint_version"
+        debug = false
+        verbose = true
+        android = false
+        outputToConsole = true
+        reporters = [org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN]
+        ignoreFailures = false
+        enableExperimentalRules = true
+        filter {
+            exclude("**/generated/**")
+            include("**/src/**")
+        }
+    }
+}
+
+task startPostgres(type: Exec) {
+    commandLine "${rootProject.projectDir}/scripts/start-postgres.sh"
+}
