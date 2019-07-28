@@ -139,9 +139,11 @@ private fun BlockyParser.BlockContext.addNodes(parent: NodeBuilderContainer) {
             is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(block ?: throw IllegalArgumentException())
             is BlockyParser.BlockEscapeContext -> {
                 val textPart = it.text.substring("[[--".length)
-                parent.addNode(TextBuilder().apply {
-                    text = textPart.substring(0, textPart.length - "--]]".length)
-                })
+                parent.addNode(
+                    TextBuilder().apply {
+                        text = textPart.substring(0, textPart.length - "--]]".length)
+                    }
+                )
             }
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
