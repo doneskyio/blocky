@@ -35,62 +35,62 @@ class TemplateTests {
 
     val template1 =
         """
-        |{template name="tpl1"}
+        |[template name="tpl1"]
         |<html>
         |<head>
-        |<title>{ctx:title}</title>
+        |<title>[ctx:title]</title>
         |</head>
         |<body>
-        |{if [a == b]}
+        |[if [a == b]]
         |Hello
-        |{/if}
-        |{if [(title == "Hello World")]}
+        |[/if]
+        |[if [(title == "Hello World")]]
         |Hello title == "Hello World"
-        |{/if}
-        |{if [(x == 1)]}
+        |[/if]
+        |[if [(x == 1)]]
         |Hello x == 1
-        |{/if}
-        |{if [(x > 1)]}
+        |[/if]
+        |[if [(x > 1)]]
         |Hello x > 1
-        |{/if}
-        |{if [(z > 1)]}
+        |[/if]
+        |[if [(z > 1)]]
         |Hello z > 1
-        |{/if}
-        |{if [(x > 1 || z > 1)]}
+        |[/if]
+        |[if [(x > 1 || z > 1)]]
         |Hello x > 1 || z > 1
-        |{/if}
-        |{if [x > 1 || z > 1]}
+        |[/if]
+        |[if [x > 1 || z > 1]]
         |Hello x > 1 || z > 1 -- 2
-        |{/if}
+        |[/if]
         |</body>
         |</html>
-        |{/template}
+        |[/template]
         """.trimMargin()
 
     val template2 =
         """
-        |{template name="tpl2"}
-        |{if [a == b]}
+        |[template name="tpl2"]
+        |[if [a == b]]
         |Hello
-        |{else}
+        |[else]
         |Hello Else
-        |{/if}
-        |{/template}
+        |[/if]
+        |[/template]
         """.trimMargin()
 
     val template3 =
         """
-        |{template name="tpl3"}
-        |{if [a != b]}
+        |[template name="tpl3"]
+        |[if [a != b]]
         |Hello a != b
-        |{elseif [a == b]}
+        |[elseif [a == b]]
         |Hello Else a == b
-        |{elseif [a != c]}
+        |[elseif [a != c]]
         |Hello Else a != c
-        |{else}
+        |[else]
         |Else!
-        |{/if}
-        |{/template}
+        |[/if]
+        |[/template]
         """.trimMargin()
 
     @Test
@@ -265,11 +265,11 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{for items="item"}
-        |{ctx:item} 
-        |{/for}
-        |{/template}
+        |[template name="fortpl"]
+        |[for items="item"]
+        |[ctx:item] 
+        |[/for]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -295,11 +295,11 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{for items="item"}
-        |{ctx:item.name} 
-        |{/for}
-        |{/template}
+        |[template name="fortpl"]
+        |[for items="item"]
+        |[ctx:item.name] 
+        |[/for]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -325,11 +325,11 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{for items="item"}
-        |{ctx:item.obj.name} 
-        |{/for}
-        |{/template}
+        |[template name="fortpl"]
+        |[for items="item"]
+        |[ctx:item.obj.name] 
+        |[/for]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -355,13 +355,13 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{for items="item"}
-        |{if [item.obj.name == "nestedname1"]}
-        |{ctx:item.obj.name} 
-        |{/if}
-        |{/for}
-        |{/template}
+        |[template name="fortpl"]
+        |[for items="item"]
+        |[if [item.obj.name == "nestedname1"]]
+        |[ctx:item.obj.name] 
+        |[/if]
+        |[/for]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -389,22 +389,22 @@ class TemplateTests {
                 return ByteArrayInputStream(
                     if (template == "template1") {
                         """
-                        |{template name="template1"}
+                        |[template name="template1"]
                         |Hello
-                        |{ref template="template2"}
+                        |[ref template="template2"]
                         |Thanks!
-                        |{/template}
+                        |[/template]
                         """.trimMargin()
                     } else {
                         """
-                        |{template name="template2"}
+                        |[template name="template2"]
                         |World
-                        |{for items="item"}
-                        |{if [item.obj.name == "nestedname1"]}
-                        |{ctx:item.obj.name} 
-                        |{/if}
-                        |{/for}
-                        |{/template}
+                        |[for items="item"]
+                        |[if [item.obj.name == "nestedname1"]]
+                        |[ctx:item.obj.name] 
+                        |[/if]
+                        |[/for]
+                        |[/template]
                         """.trimMargin()
                     }.toByteArray()
                 )
@@ -436,9 +436,9 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{ctx:dt format="date" args="MM/dd/yy"}
-        |{/template}
+        |[template name="fortpl"]
+        |[ctx:dt format="date" args="MM/dd/yy"]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -462,9 +462,9 @@ class TemplateTests {
         val y = System.currentTimeMillis()
         val template = Compiler.compile(
             """
-        |{template name="fortpl"}
-        |{ctx:dt format="currency"}
-        |{/template}
+        |[template name="fortpl"]
+        |[ctx:dt format="currency"]
+        |[/template]
         """.trimMargin()
         )
         println("Compile MS: ${System.currentTimeMillis() - y}")
@@ -490,24 +490,24 @@ class TemplateTests {
                 return ByteArrayInputStream(
                     if (template == "template1") {
                         """
-                        |{template name="template1"}
+                        |[template name="template1"]
                         |Hello
-                        |{ref placeholder="content"}
+                        |[ref placeholder="content"]
                         |Thanks!
-                        |{/template}
+                        |[/template]
                         """.trimMargin()
                     } else {
                         """
-                        |{template name="template2" parent="template1"}
-                        |{placeholder name="content"}
+                        |[template name="template2" parent="template1"]
+                        |[placeholder name="content"]
                         |World
-                        |{for items="item"}
-                        |{if [item.obj.name == "nestedname1"]}
-                        |{ctx:item.obj.name} 
-                        |{/if}
-                        |{/for}
-                        |{/placeholder}
-                        |{/template}
+                        |[for items="item"]
+                        |[if [item.obj.name == "nestedname1"]]
+                        |[ctx:item.obj.name] 
+                        |[/if]
+                        |[/for]
+                        |[/placeholder]
+                        |[/template]
                         """.trimMargin()
                     }.toByteArray()
                 )

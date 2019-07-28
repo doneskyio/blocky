@@ -16,7 +16,7 @@
 lexer grammar BlockyLexer;
 
 BLOCK_COMMENT
-    : '{!--' .*? '--}'
+    : '[!--' .*? '--]'
     ;
 
 SEA_WS
@@ -24,17 +24,17 @@ SEA_WS
     ;
 
 BLOCK_OPEN
-    : '{' -> pushMode(BLOCK)
+    : '[' -> pushMode(BLOCK)
     ;
 
 TEXT
-    : ~'{'+
+    : ~'['+
     ;
 
 mode BLOCK;
 
 BLOCK_CLOSE
-    : '}' -> popMode
+    : ']' -> popMode
     ;
 
 fragment
@@ -74,7 +74,7 @@ BLOCK_WHITESPACE
     ;
 
 BLOCK_SLASH_CLOSE
-    : '/}' -> popMode
+    : '/]' -> popMode
     ;
 
 BLOCK_SLASH
