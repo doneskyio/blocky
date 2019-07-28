@@ -37,7 +37,7 @@ def getCurrentVersion() {
 }
 
 allprojects {
-    group = "donesky.blocky"
+    group = "io.donesky.blocky"
     version = getCurrentVersion()
 
     repositories {
@@ -89,13 +89,13 @@ allprojects {
                     }
                     developers {
                         developer {
-                            id = "brock"
+                            id = "kylebrock"
                             name = "Kyle Brock"
                             email = "brock@donesky.io"
                         }
                     }
                     scm {
-                        connection = "scm:git:git://git.donesky.dev/donesky/blocky.git"
+                        connection = "scm:git:git://github.com/doneskyio/blocky.git"
                         developerConnection = "scm:git:git://git.donesky.dev/donesky/blocky.git"
                         url = "https://donesky.dev"
                     }
