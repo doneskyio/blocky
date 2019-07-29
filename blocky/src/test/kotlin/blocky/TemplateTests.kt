@@ -713,6 +713,61 @@ class TemplateTests {
         """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testDefaultValue() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[ctx:missing default="hello"]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf())
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testDefaultValue - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |hello
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testMissing() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[ctx:missing] missing
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf())
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testMissing - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            | missing
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)

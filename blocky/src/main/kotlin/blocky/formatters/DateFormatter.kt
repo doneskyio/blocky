@@ -24,8 +24,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 class DateFormatter : BlockyFormatter {
 
-    override fun format(context: Context, config: String?, name: String): ByteArray {
-        val date = context[name] as? Date ?: throw IllegalArgumentException("DateFormatter requires a date.")
+    override fun format(context: Context, config: String?, name: String): ByteArray? {
+        val contextDate = context[name] ?: return null
+        val date = contextDate as? Date ?: throw IllegalArgumentException("DateFormatter requires a date.")
         val formatter = getFormat(config ?: "default")
         val offset = ZonedDateTime.now().offset
         return formatter.format(date.toInstant().atOffset(offset).toLocalDateTime()).toByteArray(Charsets.UTF_8)

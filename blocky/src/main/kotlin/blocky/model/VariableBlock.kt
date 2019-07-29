@@ -18,16 +18,25 @@ package blocky.model
 import blocky.Blocky
 import java.io.OutputStream
 
-internal open class VariableBlock(name: String, private val formatter: String?, private val formatterConfig: String?) : Node {
+internal open class VariableBlock(
+    name: String,
+    private val formatter: String?,
+    private val formatterConfig: String?,
+    defaultValue: String?
+) : Node {
 
     private val contextName = name.substring(VariableBlock.contextPrefix.length)
+    private val defaultValue = defaultValue?.toByteArray(Charsets.UTF_8)
 
     override fun write(context: Context, out: OutputStream) {
-        formatter?.let {
-            val formatter = Blocky.getFormatter(it)
-            val output = formatter.format(context, formatterConfig, contextName)
-            out.write(output)
-        } ?: out.write(context[contextName].toString().toByteArray(Charsets.UTF_8))
+        val output =
+            if (formatter != null) {
+                val formatter = Blocky.getFormatter(formatter)
+                formatter.format(context, formatterConfig, contextName)
+            } else {
+                context[contextName]?.toString()?.toByteArray(Charsets.UTF_8)
+            } ?: defaultValue
+        output?.let { out.write(it) }
     }
 
     override fun toString(): String {

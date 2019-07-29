@@ -20,5 +20,5 @@ import blocky.model.Context
 
 interface BlockyFormatter {
 
-    fun format(context: Context, config: String?, name: String): ByteArray
+    fun format(context: Context, config: String?, name: String): ByteArray?
 }

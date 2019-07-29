@@ -21,8 +21,9 @@ import java.text.NumberFormat
 
 class CurrencyFormatter : BlockyFormatter {
 
-    override fun format(context: Context, config: String?, name: String): ByteArray {
-        val nbr = context[name] as? Number ?: throw IllegalArgumentException("$name must be a number.")
-        return NumberFormat.getCurrencyInstance().format(nbr).toByteArray(Charsets.UTF_8)
+    override fun format(context: Context, config: String?, name: String): ByteArray? {
+        val contextNumber = context[name] ?: return null
+        val number = contextNumber as? Number ?: throw IllegalArgumentException("$name must be a number.")
+        return NumberFormat.getCurrencyInstance().format(number).toByteArray(Charsets.UTF_8)
     }
 }

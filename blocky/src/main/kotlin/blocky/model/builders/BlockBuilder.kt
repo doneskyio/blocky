@@ -15,6 +15,7 @@
  */
 package blocky.model.builders
 
+import blocky.compiler.CompilerException
 import blocky.model.CompiledTemplate
 import blocky.model.ElseBlock
 import blocky.model.ForBlock
@@ -44,11 +45,11 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
     override var parent: NodeBuilder? = null
 
     override fun build(parent: Node): Node {
-        val name = name ?: throw IllegalArgumentException("Missing block name")
+        val name = name ?: throw CompilerException("Missing block name")
         return when {
             name == "root" -> {
                 if (_children.size != 1) {
-                    throw IllegalArgumentException("Invalid number of children: ${_children.size}")
+                    throw CompilerException("Invalid number of children: ${_children.size}")
                 }
                 _children.first().build(parent)
             }
@@ -61,7 +62,7 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
                     }
                     block
                 } else {
-                    TODO()
+                    throw CompilerException("Unsupported template location")
                 }
             }
             name == "placeholder" -> {
@@ -102,7 +103,8 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
             name.startsWith(VariableBlock.contextPrefix) -> VariableBlock(
                 name,
                 attributes["format"],
-                attributes["args"]
+                attributes["args"],
+                attributes["default"]
             )
             else -> throw IllegalArgumentException("Unsupported block: $name")
         }
