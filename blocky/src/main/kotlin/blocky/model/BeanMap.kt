@@ -39,13 +39,13 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
         var result: Any? = null
         var currentMap = this
         var currentObj = `object`
-        path.forEachIndexed { _, name ->
+        path.forEach { name ->
             val property = currentMap.findProperty(name) ?: throw IllegalArgumentException("Cannot find path: $path on $`object`")
             result = property.invoke(currentObj)
             result?.let {
                 currentMap = BeanMap(it.javaClass)
                 currentObj = it
-            }
+            } ?: return null
         }
         return result
     }

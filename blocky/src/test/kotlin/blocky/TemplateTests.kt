@@ -20,7 +20,6 @@ import blocky.model.Context
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.lang.Exception
 import java.math.BigDecimal
 import java.nio.file.Path
 import java.text.SimpleDateFormat
@@ -611,16 +610,16 @@ class TemplateTests {
             override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
-                        if (path.toString() == "template1") {
-                            """
+                            if (path.toString() == "template1") {
+                                """
                         |[template]
                         |Hello
                         |[ref:template name="template2"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
-                        } else if (path.toString() == "template2") {
-                            """
+                            } else if (path.toString() == "template2") {
+                                """
                         |[template]
                         |World
                         |[for items="item"]
@@ -630,10 +629,10 @@ class TemplateTests {
                         |[/for]
                         |[/template]
                         """.trimMargin()
-                        } else {
-                            throw Exception()
-                        }
-                        ).toByteArray()
+                            } else {
+                                throw Exception()
+                            }
+                            ).toByteArray()
                 )
             }
         })
@@ -665,16 +664,16 @@ class TemplateTests {
             override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
-                        if (path.toString() == "template1") {
-                            """
+                            if (path.toString() == "template1") {
+                                """
                         |[template]
                         |Hello
                         |[ref:placeholder ctx="whichplaceholder"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
-                        } else if (path.toString() == "template2") {
-                            """
+                            } else if (path.toString() == "template2") {
+                                """
                         |[template parent="template1"]
                         |[placeholder name="content"]
                         |World
@@ -686,10 +685,10 @@ class TemplateTests {
                         |[/placeholder]
                         |[/template]
                         """.trimMargin()
-                        } else {
-                            throw Exception()
-                        }
-                        ).toByteArray()
+                            } else {
+                                throw Exception()
+                            }
+                            ).toByteArray()
                 )
             }
         })
@@ -768,8 +767,56 @@ class TemplateTests {
             """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testNested() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[ctx:nested.a.a.a.x]
+                |[ctx:nested.a.a.a.a.x] 
+                |[ctx:nested.a.a.a.a.a.x default="boom"]
+                |
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(
+            mapOf(
+                "nested" to
+                        TestRecursiveNested(
+                            TestRecursiveNested(
+                                TestRecursiveNested(
+                                    TestRecursiveNested(
+                                        null,
+                                        "hello"
+                                    )
+                                )
+                            )
+                        )
+            )
+        )
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testNested - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |hello 
+            |boom
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)
 
 data class TestNestedObject(val obj: TestObject)
+
+data class TestRecursiveNested(val a: TestRecursiveNested?, val x: String? = null)
