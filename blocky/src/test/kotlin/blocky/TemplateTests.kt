@@ -610,16 +610,16 @@ class TemplateTests {
             override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
-                            if (path.toString() == "template1") {
-                                """
+                        if (path.toString() == "template1") {
+                            """
                         |[template]
                         |Hello
                         |[ref:template name="template2"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
-                            } else if (path.toString() == "template2") {
-                                """
+                        } else if (path.toString() == "template2") {
+                            """
                         |[template]
                         |World
                         |[for items="item"]
@@ -629,10 +629,10 @@ class TemplateTests {
                         |[/for]
                         |[/template]
                         """.trimMargin()
-                            } else {
-                                throw Exception()
-                            }
-                            ).toByteArray()
+                        } else {
+                            throw Exception()
+                        }
+                        ).toByteArray()
                 )
             }
         })
@@ -664,16 +664,16 @@ class TemplateTests {
             override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
-                            if (path.toString() == "template1") {
-                                """
+                        if (path.toString() == "template1") {
+                            """
                         |[template]
                         |Hello
                         |[ref:placeholder ctx="whichplaceholder"]
                         |Thanks!
                         |[/template]
                         """.trimMargin()
-                            } else if (path.toString() == "template2") {
-                                """
+                        } else if (path.toString() == "template2") {
+                            """
                         |[template parent="template1"]
                         |[placeholder name="content"]
                         |World
@@ -685,10 +685,10 @@ class TemplateTests {
                         |[/placeholder]
                         |[/template]
                         """.trimMargin()
-                            } else {
-                                throw Exception()
-                            }
-                            ).toByteArray()
+                        } else {
+                            throw Exception()
+                        }
+                        ).toByteArray()
                 )
             }
         })
@@ -787,16 +787,16 @@ class TemplateTests {
         val context = Context(
             mapOf(
                 "nested" to
+                    TestRecursiveNested(
                         TestRecursiveNested(
                             TestRecursiveNested(
                                 TestRecursiveNested(
-                                    TestRecursiveNested(
-                                        null,
-                                        "hello"
-                                    )
+                                    null,
+                                    "hello"
                                 )
                             )
                         )
+                    )
             )
         )
         val content = ByteArrayOutputStream().use {
