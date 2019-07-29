@@ -1,4 +1,4 @@
 rootProject.name = "blocky"
 
 include(":compiler-base")
-include(":compiler")
+include(":blocky")
