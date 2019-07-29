@@ -26,15 +26,15 @@ import java.util.concurrent.ConcurrentHashMap
 
 object Blocky {
 
-    var loader: BlockyLoader = object : BlockyLoader {
-
-        override fun load(path: Path): InputStream =
-            FileInputStream(path.toFile())
-    }
-
     private val formatters = ConcurrentHashMap<String, BlockyFormatter>().apply {
         this["date"] = DateFormatter()
         this["currency"] = CurrencyFormatter()
+    }
+
+    private var loader: BlockyLoader = object : BlockyLoader {
+
+        override fun load(path: Path): InputStream =
+            FileInputStream(path.toFile())
     }
 
     private var cache: BlockyCache = object : BlockyCache {
@@ -82,6 +82,10 @@ object Blocky {
 
     fun removeAllFromCache() = cache.removeAll()
     fun removeFromCache(path: Path) = cache.remove(path.normalize())
+
+    fun setLoader(loader: BlockyLoader) {
+        this.loader = loader
+    }
 
     fun setCache(cache: BlockyCache) {
         this.cache = cache
