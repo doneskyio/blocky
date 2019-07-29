@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.com/doneskyio/blocky.svg?branch=master)](https://travis-ci.com/doneskyio/blocky) 
+
+[![codecov](https://codecov.io/gh/doneskyio/blocky/branch/master/graph/badge.svg)](https://codecov.io/gh/doneskyio/blocky)
+
+
+
 # Blocky
 
 An open source template engine
