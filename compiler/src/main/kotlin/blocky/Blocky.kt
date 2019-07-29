@@ -32,25 +32,45 @@ object Blocky {
             FileInputStream(path.toFile())
     }
 
+    private val formatters = ConcurrentHashMap<String, BlockyFormatter>().apply {
+        this["date"] = DateFormatter()
+        this["currency"] = CurrencyFormatter()
+    }
+
+    private var cache: BlockyCache = object : BlockyCache {
+
+        private val cache = ConcurrentHashMap<String, BlockyTemplate>()
+
+        override fun get(path: Path): BlockyTemplate? =
+            cache[path.toString()]
+
+        override fun set(path: Path, template: BlockyTemplate) {
+            cache[path.toString()] = template
+        }
+
+        override fun remove(path: Path) {
+            cache.remove(path.toString())
+        }
+
+        override fun removeAll() {
+            cache.clear()
+        }
+    }
+
     operator fun get(template: String): BlockyTemplate {
         val pathArray = template.split("/").toTypedArray()
-        val path =
-            if (pathArray.size == 1) {
-                Path.of(pathArray.first())
-            } else {
-                Path.of("", *pathArray)
-            }.normalize()
+        val path = Path.of("", *pathArray)
         return this[path]
     }
 
     operator fun get(path: Path): BlockyTemplate {
-        val template = path.normalize().toString()
-        var compiledTemplate = cache[template]
+        val normalized = path.normalize()
+        var compiledTemplate = cache[normalized]
         if (compiledTemplate == null) {
-            loader.load(path).use {
-                compiledTemplate = Compiler.compile(path, it)
+            loader.load(normalized).use {
+                compiledTemplate = Compiler.compile(normalized, it)
             }
-            cache[template] = compiledTemplate!!
+            cache[normalized] = compiledTemplate!!
         }
         return compiledTemplate!!
     }
@@ -60,12 +80,10 @@ object Blocky {
         formatters[name] = formatter
     }
 
-    private val cache = ConcurrentHashMap<String, BlockyTemplate>()
-    private val formatters = ConcurrentHashMap<String, BlockyFormatter>().apply {
-        this["date"] = DateFormatter()
-        this["currency"] = CurrencyFormatter()
-    }
+    fun removeAllFromCache() = cache.removeAll()
+    fun removeFromCache(path: Path) = cache.remove(path.normalize())
 
-    fun removeAllFromCache() = cache.clear()
-    fun removeFromCache(path: Path) = cache.remove(path.normalize().toString())
+    fun setCache(cache: BlockyCache) {
+        this.cache = cache
+    }
 }
