@@ -19,7 +19,7 @@ import blocky.model.expression.Expression
 import java.io.OutputStream
 import java.util.concurrent.atomic.AtomicBoolean
 
-class IfBlock(
+internal class IfBlock(
     children: List<Node>,
     internal val expression: Expression
 ) : Block("if", children) {
@@ -45,7 +45,7 @@ class IfBlock(
     }
 }
 
-class ElseBlock(
+internal class ElseBlock(
     parent: Node,
     children: List<Node>,
     name: String,

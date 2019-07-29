@@ -52,14 +52,14 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
 
     companion object {
 
-        private val beanCache = ConcurrentHashMap<Class<*>, BeanMap>()
+        private val beanMapCache = ConcurrentHashMap<Class<*>, BeanMap>()
 
         operator fun get(clazz: KClass<*>): BeanMap {
             val javaClass = clazz.java
-            var bean = beanCache[javaClass]
+            var bean = beanMapCache[javaClass]
             if (bean == null) {
                 bean = BeanMap(javaClass)
-                beanCache[javaClass] = bean
+                beanMapCache[javaClass] = bean
             }
             return bean
         }

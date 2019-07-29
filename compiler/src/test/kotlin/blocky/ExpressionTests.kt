@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package blocky
 
 import blocky.compiler.Compiler
+import blocky.model.CompiledTemplate
 import blocky.model.Context
 import blocky.model.IfBlock
 import blocky.model.expression.Expression
@@ -32,7 +32,7 @@ class ExpressionTests {
     private val String.expression: Expression
         get() {
             val template = Compiler.compile(Path.of("template.html"), ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray()))
-            val block = template.children.first() as IfBlock
+            val block = (template as CompiledTemplate).children.first() as IfBlock
             return block.expression
         }
 

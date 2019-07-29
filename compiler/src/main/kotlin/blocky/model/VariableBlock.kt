@@ -18,7 +18,7 @@ package blocky.model
 import blocky.Blocky
 import java.io.OutputStream
 
-open class VariableBlock(name: String, private val formatter: String?, private val formatterConfig: String?) : Node {
+internal open class VariableBlock(name: String, private val formatter: String?, private val formatterConfig: String?) : Node {
 
     private val contextName = name.substring(VariableBlock.contextPrefix.length)
 

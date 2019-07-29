@@ -15,7 +15,7 @@
  */
 package blocky.model
 
-open class Block(protected val name: String, children: List<Node>) :
+internal open class Block(protected val name: String, children: List<Node>) :
     AbstractNodeContainer(children) {
 
     override fun toString(): String {

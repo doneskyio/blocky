@@ -21,7 +21,7 @@ import blocky.model.BlockyTemplate
 import java.io.OutputStream
 import java.nio.file.Path
 
-class RootBuilder(path: Path) : BlockBuilder(path) {
+internal class RootBuilder(path: Path) : BlockBuilder(path) {
 
     init {
         name = "root"

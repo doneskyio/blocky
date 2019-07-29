@@ -22,12 +22,12 @@ interface Node {
     fun write(context: Context, out: OutputStream)
 }
 
-interface NodeContainer : Node {
+internal interface NodeContainer : Node {
 
     val children: List<Node>
 }
 
-abstract class AbstractNodeContainer(override val children: List<Node>) : NodeContainer {
+internal abstract class AbstractNodeContainer(override val children: List<Node>) : NodeContainer {
 
     override fun write(context: Context, out: OutputStream): Unit = children.forEach { it.write(context, out) }
 

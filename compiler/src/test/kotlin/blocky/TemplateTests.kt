@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package blocky
 
 import blocky.compiler.Compiler
@@ -21,6 +20,7 @@ import blocky.model.Context
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.lang.Exception
 import java.math.BigDecimal
 import java.nio.file.Path
 import java.text.SimpleDateFormat
@@ -601,6 +601,116 @@ class TemplateTests {
             """
             |Hello [][][][][blah][][][]
             """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate12() {
+        val y = System.currentTimeMillis()
+        Blocky.setLoader(object : BlockyLoader {
+            override fun load(path: Path): InputStream {
+                return ByteArrayInputStream(
+                    (
+                        if (path.toString() == "template1") {
+                            """
+                        |[template]
+                        |Hello
+                        |[ref:template name="template2"]
+                        |Thanks!
+                        |[/template]
+                        """.trimMargin()
+                        } else if (path.toString() == "template2") {
+                            """
+                        |[template]
+                        |World
+                        |[for items="item"]
+                        |[if [item.obj.name == "nestedname1"]]
+                        |[ctx:item.obj.name] 
+                        |[/if]
+                        |[/for]
+                        |[/template]
+                        """.trimMargin()
+                        } else {
+                            throw Exception()
+                        }
+                        ).toByteArray()
+                )
+            }
+        })
+        val template = Blocky["template1"]
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
+        val context = Context(mapOf("items" to items))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate12 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+        |Hello
+        |World
+        |nestedname1 
+        |Thanks!
+        |
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate13() {
+        val y = System.currentTimeMillis()
+        Blocky.setLoader(object : BlockyLoader {
+            override fun load(path: Path): InputStream {
+                return ByteArrayInputStream(
+                    (
+                        if (path.toString() == "template1") {
+                            """
+                        |[template]
+                        |Hello
+                        |[ref:placeholder ctx="whichplaceholder"]
+                        |Thanks!
+                        |[/template]
+                        """.trimMargin()
+                        } else if (path.toString() == "template2") {
+                            """
+                        |[template parent="template1"]
+                        |[placeholder name="content"]
+                        |World
+                        |[for items="item"]
+                        |[if [item.obj.name == "nestedname1"]]
+                        |[ctx:item.obj.name] 
+                        |[/if]
+                        |[/for]
+                        |[/placeholder]
+                        |[/template]
+                        """.trimMargin()
+                        } else {
+                            throw Exception()
+                        }
+                        ).toByteArray()
+                )
+            }
+        })
+        val template = Blocky["template2"]
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
+        val context = Context(mapOf("items" to items, "whichplaceholder" to "content"))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testTemplate12 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+        |Hello
+        |World
+        |nestedname1 
+        |Thanks!
+        |
+        """.trimMargin()
         assertEquals(expected, content)
     }
 }

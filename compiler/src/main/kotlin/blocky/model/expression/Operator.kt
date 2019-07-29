@@ -15,7 +15,7 @@
  */
 package blocky.model.expression
 
-enum class Operator(private val operator: String) {
+internal enum class Operator(private val operator: String) {
     And("&&"),
     Or("||");
 

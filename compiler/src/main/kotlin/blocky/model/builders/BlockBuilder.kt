@@ -15,19 +15,18 @@
  */
 package blocky.model.builders
 
-import blocky.compiler.CompilerException
+import blocky.model.CompiledTemplate
 import blocky.model.ElseBlock
 import blocky.model.ForBlock
 import blocky.model.IfBlock
 import blocky.model.Node
-import blocky.model.BlockyTemplate
 import blocky.model.Placeholder
 import blocky.model.PlaceholderRef
 import blocky.model.TemplateRef
 import blocky.model.VariableBlock
 import java.nio.file.Path
 
-open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuilderContainer {
+internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuilderContainer {
 
     private val _children = mutableListOf<NodeBuilder>()
 
@@ -56,7 +55,7 @@ open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuilderContai
             name == "template" -> {
                 if (parent == RootBuilder.root) {
                     val children = mutableListOf<Node>()
-                    val block = BlockyTemplate(path, children, attributes["parent"]?.let { path.resolveSibling(it) })
+                    val block = CompiledTemplate(path, children, attributes["parent"]?.let { path.resolveSibling(it) })
                     _children.forEach {
                         children.add(it.build(block))
                     }
@@ -98,8 +97,8 @@ open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuilderContai
                 }
                 block
             }
-            name == "ref:template" -> TemplateRef(attributes["name"]?.let { path.resolveSibling(it) } ?: throw CompilerException("name is required."))
-            name == "ref:placeholder" -> PlaceholderRef(attributes["name"] ?: throw CompilerException("name is required."))
+            name == "ref:template" -> TemplateRef(path, attributes["name"]?.let { path.resolveSibling(it) }, attributes["ctx"])
+            name == "ref:placeholder" -> PlaceholderRef(attributes["name"], attributes["ctx"])
             name.startsWith(VariableBlock.contextPrefix) -> VariableBlock(
                 name,
                 attributes["format"],

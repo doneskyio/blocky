@@ -16,4 +16,4 @@
 
 package blocky.model
 
-class Placeholder(internal val name: String, children: List<Node>) : AbstractNodeContainer(children)
+internal class Placeholder(internal val name: String, children: List<Node>) : AbstractNodeContainer(children)

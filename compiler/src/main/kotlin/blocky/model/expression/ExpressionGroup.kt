@@ -17,7 +17,7 @@ package blocky.model.expression
 
 import blocky.model.Context
 
-data class ExpressionGroup(
+internal data class ExpressionGroup(
     val children: List<Expression>,
     val negative: Boolean = false,
     override val operator: Operator = Operator.And

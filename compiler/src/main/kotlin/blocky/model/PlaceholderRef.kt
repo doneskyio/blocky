@@ -15,11 +15,24 @@
  */
 package blocky.model
 
+import blocky.compiler.CompilerException
 import java.io.OutputStream
 
-class PlaceholderRef(private val placeholderRef: String) : Node {
+internal class PlaceholderRef(
+    private val placeholderRef: String?,
+    private val placeholderCtxRef: String?
+) : Node {
+
+    init {
+        if (placeholderRef == null && placeholderCtxRef == null)
+            throw CompilerException("placeholder or ctx is required")
+    }
 
     override fun write(context: Context, out: OutputStream) {
-        context.getPlaceholder(placeholderRef)?.write(context, out)
+        context.getPlaceholder(
+            placeholderCtxRef?.let {
+                context[it]?.toString() ?: throw NullPointerException("$it is not defined")
+            } ?: placeholderRef!!
+        )?.write(context, out)
     }
 }

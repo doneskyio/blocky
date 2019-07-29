@@ -17,7 +17,7 @@ package blocky.model
 
 import java.io.OutputStream
 
-class TextBlock(text: String) : Node {
+internal class TextBlock(text: String) : Node {
 
     private val text = when { // remove new line because of block
         text.startsWith("\n") -> text.substring(1)

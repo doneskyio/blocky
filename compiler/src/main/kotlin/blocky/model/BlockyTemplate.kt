@@ -15,37 +15,4 @@
  */
 package blocky.model
 
-import blocky.Blocky
-import java.io.OutputStream
-import java.nio.file.Path
-
-class BlockyTemplate(
-    val path: Path,
-    children: List<Node>,
-    private val parentRef: Path?
-) : Block("template", children) {
-
-    private val placeholders by lazy {
-        children.filterIsInstance<Placeholder>()
-    }
-
-    private val nonPlaceholders by lazy {
-        children.filter { it !is Placeholder }
-    }
-
-    override fun write(context: Context, out: OutputStream) {
-        placeholders.forEach {
-            if (!context.hasPlaceholder(it.name))
-                context.setPlaceholder(it.name, it)
-        }
-        if (parentRef == null) {
-            nonPlaceholders.forEach { it.write(context, out) }
-        } else {
-            Blocky[parentRef].write(context, out)
-        }
-    }
-
-    override fun toString(): String {
-        return "Template name=$name children=$children"
-    }
-}
+interface BlockyTemplate : Node

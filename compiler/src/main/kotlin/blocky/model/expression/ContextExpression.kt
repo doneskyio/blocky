@@ -18,7 +18,7 @@ package blocky.model.expression
 
 import blocky.model.Context
 
-class ContextExpression(private val name: String) : Expression {
+internal class ContextExpression(private val name: String) : Expression {
 
     override val operator = Operator.And
 

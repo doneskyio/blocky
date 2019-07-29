@@ -15,7 +15,7 @@
  */
 package blocky.model.expression
 
-enum class Comparator(private val comparator: String) {
+internal enum class Comparator(private val comparator: String) {
     Equals("=="),
     NotEquals("!="),
     GreaterThan(">"),

@@ -17,7 +17,7 @@ package blocky.model.expression
 
 import blocky.model.Context
 
-interface Expression {
+internal interface Expression {
 
     val operator: Operator
     fun evaluate(context: Context): Boolean

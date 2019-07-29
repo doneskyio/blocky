@@ -18,7 +18,7 @@ package blocky.model.builders
 import blocky.model.Node
 import blocky.model.TextBlock
 
-class TextBuilder(var text: String = "") : BaseNodeBuilder() {
+internal class TextBuilder(var text: String = "") : BaseNodeBuilder() {
 
     override fun build(parent: Node) = TextBlock(text)
 }

@@ -17,7 +17,7 @@ package blocky.model.expression
 
 import blocky.model.Context
 
-data class ValueExpression(
+internal data class ValueExpression(
     val left: Value,
     val right: Value,
     val comparator: Comparator = Comparator.Equals,

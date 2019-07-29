@@ -17,15 +17,15 @@ package blocky.model
 
 import java.io.OutputStream
 
-class ForBlock(
+internal class ForBlock(
     private val variableName: String,
     private val itemName: String,
     children: List<Node>
 ) : Block("for", children) {
 
     override fun write(context: Context, out: OutputStream) {
-        val collection = context[variableName] as Collection<*>
-        collection.forEach {
+        val collection = context[variableName] as? Collection<*>
+        collection?.forEach {
             val itemContext = context.newChildContext(mapOf(itemName to it))
             children.forEach { child ->
                 child.write(itemContext, out)

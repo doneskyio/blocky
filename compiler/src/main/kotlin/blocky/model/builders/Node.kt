@@ -17,21 +17,21 @@ package blocky.model.builders
 
 import blocky.model.Node
 
-interface NodeBuilderContainer : NodeBuilder {
+internal interface NodeBuilderContainer : NodeBuilder {
 
     val children: List<NodeBuilder>
 
     fun addNode(node: NodeBuilder)
 }
 
-interface NodeBuilder {
+internal interface NodeBuilder {
 
     var parent: NodeBuilder?
 
     fun build(parent: Node): Node
 }
 
-abstract class BaseNodeBuilder : NodeBuilder {
+internal abstract class BaseNodeBuilder : NodeBuilder {
 
     override var parent: NodeBuilder? = null
 }

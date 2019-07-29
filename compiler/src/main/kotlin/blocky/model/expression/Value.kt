@@ -17,12 +17,12 @@ package blocky.model.expression
 
 import blocky.model.Context
 
-interface Value {
+internal interface Value {
 
     fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean
 }
 
-object NullValue : Value {
+internal object NullValue : Value {
 
     override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean {
         return other == this
@@ -31,7 +31,7 @@ object NullValue : Value {
     override fun toString(): String = "null"
 }
 
-class BooleanValue(internal val value: Boolean) : Value {
+internal class BooleanValue(internal val value: Boolean) : Value {
 
     override fun compareTo(context: Context, other: Any?, comparator: Comparator) =
         when (other) {
@@ -43,7 +43,7 @@ class BooleanValue(internal val value: Boolean) : Value {
     override fun toString(): String = value.toString()
 }
 
-class ContextValue(private val name: String) : Value {
+internal class ContextValue(private val name: String) : Value {
 
     override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean {
         val otherValue = if (other is ContextValue) {
@@ -85,7 +85,7 @@ class ContextValue(private val name: String) : Value {
     override fun toString() = name
 }
 
-class StringValue(internal val value: String) : Value {
+internal class StringValue(internal val value: String) : Value {
 
     override fun compareTo(context: Context, other: Any?, comparator: Comparator) =
         when (other) {
@@ -97,7 +97,7 @@ class StringValue(internal val value: String) : Value {
     override fun toString() = "\"$value\""
 }
 
-open class NumberValue<out T : Number>(internal val value: T) : Value {
+internal open class NumberValue<out T : Number>(internal val value: T) : Value {
 
     override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean =
         when (other) {

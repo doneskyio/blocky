@@ -46,7 +46,7 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.nio.file.Path
 
-object Compiler {
+internal object Compiler {
 
     fun compile(path: Path, `in`: String): BlockyTemplate =
         compile(path, ByteArrayInputStream(`in`.toByteArray(Charsets.UTF_8)))
