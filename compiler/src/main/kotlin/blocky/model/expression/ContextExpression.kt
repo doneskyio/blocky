@@ -24,9 +24,9 @@ internal class ContextExpression(private val name: String) : Expression {
 
     override fun evaluate(context: Context) =
         (context[name] as? ExpressionCallback)?.evaluate(context) ?: false
+}
 
-    interface ExpressionCallback {
+interface ExpressionCallback {
 
-        fun evaluate(context: Context): Boolean
-    }
+    fun evaluate(context: Context): Boolean
 }

@@ -17,6 +17,7 @@ package blocky
 
 import blocky.model.Context
 import blocky.model.expression.ContextExpression
+import blocky.model.expression.ExpressionCallback
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.file.Path
@@ -39,7 +40,7 @@ class HtmlTests {
         val context = Context(
             mapOf(
                 "user" to "hello",
-                "admin" to object : ContextExpression.ExpressionCallback {
+                "admin" to object : ExpressionCallback {
                     override fun evaluate(context: Context): Boolean = true
                 }
             )
@@ -62,7 +63,7 @@ class HtmlTests {
         val context = Context(
             mapOf(
                 "user" to "hello",
-                "admin" to object : ContextExpression.ExpressionCallback {
+                "admin" to object : ExpressionCallback {
                     override fun evaluate(context: Context): Boolean = true
                 }
             )
