@@ -1,12 +1,10 @@
 buildscript {
     repositories {
-        maven {
-            url "https://artifacts.donesky.dev/repository/donesky"
-            credentials {
-                username System.getenv("donesky_nexus_username")
-                password System.getenv("donesky_nexus_password")
-            }
-        }
+        mavenCentral()
+        maven { url "https://dl.bintray.com/kotlin/dokka" }
+        maven { url "https://dl.bintray.com/kotlin" }
+        maven { url "https://plugins.gradle.org/m2" }
+        maven { url "https://dl.bintray.com/kotlin/kotlinx" }
     }
 
     dependencies {
@@ -41,13 +39,9 @@ allprojects {
     version = getCurrentVersion()
 
     repositories {
-        maven {
-            url "https://artifacts.donesky.dev/repository/donesky"
-            credentials {
-                username System.getenv("donesky_nexus_username")
-                password System.getenv("donesky_nexus_password")
-            }
-        }
+        mavenCentral()
+        maven { url "https://dl.bintray.com/kotlin/dokka" }
+        maven { url "https://dl.bintray.com/kotlin/kotlinx" }
     }
 
     if (name == "compiler-base") {
