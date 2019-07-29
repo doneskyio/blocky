@@ -16,7 +16,6 @@
 package blocky
 
 import blocky.model.Context
-import blocky.model.expression.ContextExpression
 import blocky.model.expression.ExpressionCallback
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
