@@ -51,4 +51,4 @@ Expected output:
 ```
 
 Want more examples?  Visit the tests: 
-https://github.com/doneskyio/blocky/tree/master/compiler/src/test/kotlin/blocky
+https://github.com/doneskyio/blocky/tree/master/blocky/src/test/kotlin/blocky
