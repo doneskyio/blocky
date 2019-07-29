@@ -19,10 +19,13 @@ import blocky.model.Context
 import blocky.model.Node
 import blocky.model.BlockyTemplate
 import java.io.OutputStream
+import java.nio.file.Path
 
-class RootBuilder : BlockBuilder() {
+class RootBuilder(path: Path) : BlockBuilder(path) {
 
-    init { name = "root" }
+    init {
+        name = "root"
+    }
 
     fun build(): BlockyTemplate = build(root) as BlockyTemplate
 

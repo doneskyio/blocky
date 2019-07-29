@@ -25,8 +25,9 @@ import blocky.model.expression.ExpressionGroup
 import blocky.model.expression.Operator
 import blocky.model.expression.Value
 import blocky.model.expression.ValueExpression
+import java.nio.file.Path
 
-class IfBuilder : BlockBuilder() {
+class IfBuilder(path: Path) : BlockBuilder(path) {
 
     var expression: Expression? = null
 

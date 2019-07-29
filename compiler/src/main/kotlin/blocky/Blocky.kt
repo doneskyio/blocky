@@ -19,24 +19,41 @@ import blocky.compiler.Compiler
 import blocky.formatters.CurrencyFormatter
 import blocky.formatters.DateFormatter
 import blocky.model.BlockyTemplate
+import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 object Blocky {
 
-    lateinit var loader: BlockyLoader
+    var loader: BlockyLoader = object : BlockyLoader {
+
+        override fun load(path: Path): InputStream =
+            FileInputStream(path.toFile())
+    }
 
     operator fun get(template: String): BlockyTemplate {
+        val pathArray = template.split("/").toTypedArray()
+        val path =
+            if (pathArray.size == 1) {
+                Path.of(pathArray.first())
+            } else {
+                Path.of("", *pathArray)
+            }.normalize()
+        return this[path]
+    }
+
+    operator fun get(path: Path): BlockyTemplate {
+        val template = path.normalize().toString()
         var compiledTemplate = cache[template]
         if (compiledTemplate == null) {
-            loader.load(template).use {
-                compiledTemplate = Compiler.compile(it)
+            loader.load(path).use {
+                compiledTemplate = Compiler.compile(path, it)
             }
             cache[template] = compiledTemplate!!
         }
         return compiledTemplate!!
     }
-
-    fun remove(template: String) = cache.remove(template)
 
     fun getFormatter(name: String): BlockyFormatter = formatters.getValue(name)
     fun setFormatter(name: String, formatter: BlockyFormatter) {
@@ -49,5 +66,6 @@ object Blocky {
         this["currency"] = CurrencyFormatter()
     }
 
-    fun flushCache() = cache.clear()
+    fun removeAllFromCache() = cache.clear()
+    fun removeFromCache(path: Path) = cache.remove(path.normalize().toString())
 }

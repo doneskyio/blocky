@@ -16,8 +16,9 @@
 package blocky
 
 import java.io.InputStream
+import java.nio.file.Path
 
 interface BlockyLoader {
 
-    fun load(template: String): InputStream
+    fun load(path: Path): InputStream
 }

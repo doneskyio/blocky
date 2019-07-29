@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.math.BigDecimal
+import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.test.BeforeTest
@@ -31,7 +32,7 @@ import kotlin.test.assertEquals
 class TemplateTests {
 
     @BeforeTest
-    fun flushCache() = Blocky.flushCache()
+    fun flushCache() = Blocky.removeAllFromCache()
 
     val template1 =
         """
@@ -95,7 +96,7 @@ class TemplateTests {
 
     @Test
     fun testTemplate1() {
-        val template = Compiler.compile(template1)
+        val template = Compiler.compile(Path.of("template.html"), template1)
         val context = Context(mapOf("title" to "Hello World"))
         val content = ByteArrayOutputStream().use {
             template.write(context, it)
@@ -118,7 +119,7 @@ class TemplateTests {
 
     @Test
     fun testTemplate1_2() {
-        val template = Compiler.compile(template1)
+        val template = Compiler.compile(Path.of("template.html"), template1)
         val context = Context(mapOf("title" to "Hello World", "x" to 1))
         val content = ByteArrayOutputStream().use {
             template.write(context, it)
@@ -142,7 +143,7 @@ class TemplateTests {
 
     @Test
     fun testTemplate1_3() {
-        val template = Compiler.compile(template1)
+        val template = Compiler.compile(Path.of("template.html"), template1)
         val context = Context(mapOf("title" to "Hello World", "x" to 2))
         val content = ByteArrayOutputStream().use {
             template.write(context, it)
@@ -166,7 +167,7 @@ class TemplateTests {
 
     @Test
     fun testTemplate2() {
-        val template = Compiler.compile(template2)
+        val template = Compiler.compile(Path.of("template.html"), template2)
         val context = Context(mapOf("title" to "Hello World"))
         val content = ByteArrayOutputStream().use {
             template.write(context, it)
@@ -183,7 +184,7 @@ class TemplateTests {
     @Test
     fun testTemplate2_1() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(template2)
+        val template = Compiler.compile(Path.of("template.html"), template2)
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("a" to 1, "b" to 1))
         val content = ByteArrayOutputStream().use {
@@ -203,7 +204,7 @@ class TemplateTests {
     @Test
     fun testTemplate3_1() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(template3)
+        val template = Compiler.compile(Path.of("template.html"), template3)
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("a" to 1, "b" to 1))
         val content = ByteArrayOutputStream().use {
@@ -223,7 +224,7 @@ class TemplateTests {
     @Test
     fun testTemplate3_2() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(template3)
+        val template = Compiler.compile(Path.of("template.html"), template3)
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("a" to 1, "b" to 2))
         val content = ByteArrayOutputStream().use {
@@ -243,7 +244,7 @@ class TemplateTests {
     @Test
     fun testTemplate3_3() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(template3)
+        val template = Compiler.compile(Path.of("template.html"), template3)
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf())
         val content = ByteArrayOutputStream().use {
@@ -263,15 +264,17 @@ class TemplateTests {
     @Test
     fun testTemplate4() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[for items="item"]
         |[ctx:item] 
         |[/for]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf("1", "2")
         val context = Context(mapOf("items" to items))
@@ -293,15 +296,17 @@ class TemplateTests {
     @Test
     fun testTemplate5() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[for items="item"]
         |[ctx:item.name] 
         |[/for]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestObject("name1"), TestObject("name2"))
         val context = Context(mapOf("items" to items))
@@ -323,15 +328,17 @@ class TemplateTests {
     @Test
     fun testTemplate6() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[for items="item"]
         |[ctx:item.obj.name] 
         |[/for]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
         val context = Context(mapOf("items" to items))
@@ -353,8 +360,10 @@ class TemplateTests {
     @Test
     fun testTemplate7() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[for items="item"]
         |[if [item.obj.name == "nestedname1"]]
@@ -363,7 +372,7 @@ class TemplateTests {
         |[/for]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
         val context = Context(mapOf("items" to items))
@@ -385,11 +394,11 @@ class TemplateTests {
     fun testTemplate8() {
         val y = System.currentTimeMillis()
         Blocky.loader = object : BlockyLoader {
-            override fun load(template: String): InputStream {
+            override fun load(path: Path): InputStream {
                 return ByteArrayInputStream(
-                    if (template == "template1") {
+                    if (path.toString() == "template1") {
                         """
-                        |[template name="template1"]
+                        |[template]
                         |Hello
                         |[ref:template name="template2"]
                         |Thanks!
@@ -397,7 +406,7 @@ class TemplateTests {
                         """.trimMargin()
                     } else {
                         """
-                        |[template name="template2"]
+                        |[template]
                         |World
                         |[for items="item"]
                         |[if [item.obj.name == "nestedname1"]]
@@ -434,13 +443,15 @@ class TemplateTests {
     @Test
     fun testTemplate9() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[ctx:dt format="date" args="MM/dd/yy"]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val dt = Date()
         val context = Context(mapOf("dt" to dt))
@@ -460,13 +471,15 @@ class TemplateTests {
     @Test
     fun testTemplate10() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template name="fortpl"]
         |[ctx:dt format="currency"]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("dt" to BigDecimal("100.00")))
         val content = ByteArrayOutputStream().use {
@@ -486,9 +499,9 @@ class TemplateTests {
     fun testTemplate11() {
         val y = System.currentTimeMillis()
         Blocky.loader = object : BlockyLoader {
-            override fun load(template: String): InputStream {
+            override fun load(path: Path): InputStream {
                 return ByteArrayInputStream(
-                    if (template == "template1") {
+                    if (path.toString() == "template1") {
                         """
                         |[template name="template1"]
                         |Hello
@@ -537,14 +550,16 @@ class TemplateTests {
     @Test
     fun testComment() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template]
         |[!-- Some comment --]
         |Hello
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("dt" to BigDecimal("100.00")))
         val content = ByteArrayOutputStream().use {
@@ -564,14 +579,16 @@ class TemplateTests {
     @Test
     fun testEscapedContent() {
         val y = System.currentTimeMillis()
-        val template = Compiler.compile(
-            """
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
         |[template]
         |[!-- Some comment --]
         |Hello [[--[][][][][blah][][][]--]]
         |[/template]
         """.trimMargin()
-        )
+            )
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val context = Context(mapOf("dt" to BigDecimal("100.00")))
         val content = ByteArrayOutputStream().use {

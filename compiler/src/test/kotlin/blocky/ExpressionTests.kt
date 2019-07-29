@@ -21,6 +21,7 @@ import blocky.model.Context
 import blocky.model.IfBlock
 import blocky.model.expression.Expression
 import java.io.ByteArrayInputStream
+import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -30,7 +31,7 @@ class ExpressionTests {
 
     private val String.expression: Expression
         get() {
-            val template = Compiler.compile(ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray()))
+            val template = Compiler.compile(Path.of("template.html"), ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray()))
             val block = template.children.first() as IfBlock
             return block.expression
         }

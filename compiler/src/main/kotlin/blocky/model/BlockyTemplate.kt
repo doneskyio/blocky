@@ -17,10 +17,12 @@ package blocky.model
 
 import blocky.Blocky
 import java.io.OutputStream
+import java.nio.file.Path
 
 class BlockyTemplate(
+    val path: Path,
     children: List<Node>,
-    private val parentRef: String?
+    private val parentRef: Path?
 ) : Block("template", children) {
 
     private val placeholders by lazy {

@@ -19,22 +19,46 @@ import blocky.model.Context
 import blocky.model.expression.ContextExpression
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.nio.file.Path
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class HtmlTests {
 
     @BeforeTest
-    fun flushCache() = Blocky.flushCache()
+    fun flushCache() = Blocky.removeAllFromCache()
 
     @Test
     fun testIndexAndTemplate() {
         Blocky.loader = object : BlockyLoader {
-            override fun load(template: String): InputStream {
-                return BlockyLoader::class.java.getResourceAsStream("/$template")
+            override fun load(path: Path): InputStream {
+                return BlockyLoader::class.java.getResourceAsStream("/$path")
             }
         }
         val template = Blocky["index.html"]
+        val context = Context(
+            mapOf(
+                "user" to "hello",
+                "admin" to object : ContextExpression.ExpressionCallback {
+                    override fun evaluate(context: Context): Boolean = true
+                }
+            )
+        )
+        val content = ByteArrayOutputStream().use {
+            template.write(context, it)
+            it.toString()
+        }
+        println(content)
+    }
+
+    @Test
+    fun testIndexAndTemplate2() {
+        Blocky.loader = object : BlockyLoader {
+            override fun load(path: Path): InputStream {
+                return BlockyLoader::class.java.getResourceAsStream("/$path")
+            }
+        }
+        val template = Blocky["subdir/index.html"]
         val context = Context(
             mapOf(
                 "user" to "hello",
