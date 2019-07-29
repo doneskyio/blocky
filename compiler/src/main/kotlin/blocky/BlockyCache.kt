@@ -15,7 +15,6 @@
  */
 package blocky
 
-import blocky.model.BlockyTemplate
 import java.nio.file.Path
 
 interface BlockyCache {

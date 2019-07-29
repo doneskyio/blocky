@@ -15,12 +15,9 @@
  */
 package blocky
 
-import blocky.compiler.Compiler
 import blocky.formatters.CurrencyFormatter
 import blocky.formatters.DateFormatter
-import blocky.model.BlockyTemplate
 import java.io.FileInputStream
-import java.io.InputStream
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
@@ -31,9 +28,9 @@ object Blocky {
         this["currency"] = CurrencyFormatter()
     }
 
-    private var loader: BlockyLoader = object : BlockyLoader {
+    private var loader: BlockyLoader = object : BlockyCompilerLoader() {
 
-        override fun load(path: Path): InputStream =
+        override fun openInputStream(path: Path) =
             FileInputStream(path.toFile())
     }
 
@@ -67,12 +64,10 @@ object Blocky {
         val normalized = path.normalize()
         var compiledTemplate = cache[normalized]
         if (compiledTemplate == null) {
-            loader.load(normalized).use {
-                compiledTemplate = Compiler.compile(normalized, it)
-            }
-            cache[normalized] = compiledTemplate!!
+            compiledTemplate = loader.load(normalized)
+            cache[normalized] = compiledTemplate
         }
-        return compiledTemplate!!
+        return compiledTemplate
     }
 
     fun getFormatter(name: String): BlockyFormatter = formatters.getValue(name)

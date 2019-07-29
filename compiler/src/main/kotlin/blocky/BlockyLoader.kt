@@ -15,10 +15,20 @@
  */
 package blocky
 
+import blocky.compiler.Compiler
 import java.io.InputStream
 import java.nio.file.Path
 
 interface BlockyLoader {
 
-    fun load(path: Path): InputStream
+    fun load(path: Path): BlockyTemplate
+}
+
+abstract class BlockyCompilerLoader : BlockyLoader {
+
+    protected abstract fun openInputStream(path: Path): InputStream
+
+    protected open fun compile(path: Path, stream: InputStream) = Compiler.compile(path, stream)
+
+    override fun load(path: Path) = openInputStream(path).use { compile(path, it) }
 }

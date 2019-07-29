@@ -17,7 +17,7 @@ package blocky.model.builders
 
 import blocky.model.Context
 import blocky.model.Node
-import blocky.model.BlockyTemplate
+import blocky.BlockyTemplate
 import java.io.OutputStream
 import java.nio.file.Path
 

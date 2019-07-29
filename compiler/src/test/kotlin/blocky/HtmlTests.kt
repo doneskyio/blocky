@@ -30,8 +30,8 @@ class HtmlTests {
 
     @Test
     fun testIndexAndTemplate() {
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return BlockyLoader::class.java.getResourceAsStream("/$path")
             }
         })
@@ -53,8 +53,8 @@ class HtmlTests {
 
     @Test
     fun testIndexAndTemplate2() {
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return BlockyLoader::class.java.getResourceAsStream("/$path")
             }
         })

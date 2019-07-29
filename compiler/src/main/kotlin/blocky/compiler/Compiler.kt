@@ -18,7 +18,7 @@ package blocky.compiler
 import blocky.BlockyLexer
 import blocky.BlockyParser
 import blocky.BlockyParserBaseListener
-import blocky.model.BlockyTemplate
+import blocky.BlockyTemplate
 import blocky.model.builders.BlockBuilder
 import blocky.model.builders.IfBuilder
 import blocky.model.builders.MutableExpression

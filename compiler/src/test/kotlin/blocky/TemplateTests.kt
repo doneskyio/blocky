@@ -393,8 +393,8 @@ class TemplateTests {
     @Test
     fun testTemplate8() {
         val y = System.currentTimeMillis()
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     if (path.toString() == "template1") {
                         """
@@ -498,8 +498,8 @@ class TemplateTests {
     @Test
     fun testTemplate11() {
         val y = System.currentTimeMillis()
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     if (path.toString() == "template1") {
                         """
@@ -607,8 +607,8 @@ class TemplateTests {
     @Test
     fun testTemplate12() {
         val y = System.currentTimeMillis()
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
                         if (path.toString() == "template1") {
@@ -661,8 +661,8 @@ class TemplateTests {
     @Test
     fun testTemplate13() {
         val y = System.currentTimeMillis()
-        Blocky.setLoader(object : BlockyLoader {
-            override fun load(path: Path): InputStream {
+        Blocky.setLoader(object : BlockyCompilerLoader() {
+            override fun openInputStream(path: Path): InputStream {
                 return ByteArrayInputStream(
                     (
                         if (path.toString() == "template1") {
