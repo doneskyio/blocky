@@ -30,11 +30,11 @@ class HtmlTests {
 
     @Test
     fun testIndexAndTemplate() {
-        Blocky.loader = object : BlockyLoader {
+        Blocky.setLoader(object : BlockyLoader {
             override fun load(path: Path): InputStream {
                 return BlockyLoader::class.java.getResourceAsStream("/$path")
             }
-        }
+        })
         val template = Blocky["index.html"]
         val context = Context(
             mapOf(
@@ -53,11 +53,11 @@ class HtmlTests {
 
     @Test
     fun testIndexAndTemplate2() {
-        Blocky.loader = object : BlockyLoader {
+        Blocky.setLoader(object : BlockyLoader {
             override fun load(path: Path): InputStream {
                 return BlockyLoader::class.java.getResourceAsStream("/$path")
             }
-        }
+        })
         val template = Blocky["subdir/index.html"]
         val context = Context(
             mapOf(

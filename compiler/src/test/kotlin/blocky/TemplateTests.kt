@@ -393,7 +393,7 @@ class TemplateTests {
     @Test
     fun testTemplate8() {
         val y = System.currentTimeMillis()
-        Blocky.loader = object : BlockyLoader {
+        Blocky.setLoader(object : BlockyLoader {
             override fun load(path: Path): InputStream {
                 return ByteArrayInputStream(
                     if (path.toString() == "template1") {
@@ -418,7 +418,7 @@ class TemplateTests {
                     }.toByteArray()
                 )
             }
-        }
+        })
         val template = Blocky["template1"]
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
@@ -498,7 +498,7 @@ class TemplateTests {
     @Test
     fun testTemplate11() {
         val y = System.currentTimeMillis()
-        Blocky.loader = object : BlockyLoader {
+        Blocky.setLoader(object : BlockyLoader {
             override fun load(path: Path): InputStream {
                 return ByteArrayInputStream(
                     if (path.toString() == "template1") {
@@ -525,7 +525,7 @@ class TemplateTests {
                     }.toByteArray()
                 )
             }
-        }
+        })
         val template = Blocky["template2"]
         println("Compile MS: ${System.currentTimeMillis() - y}")
         val items = listOf(TestNestedObject(TestObject("nestedname1")), TestNestedObject(TestObject("nestedname2")))
