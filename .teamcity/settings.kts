@@ -43,6 +43,13 @@ object Build : BuildType({
                 excludeClasses = "kotlin.*"
             }
         }
+        gradle {
+            name = "Publish Blocky"
+            tasks = "clean version publish"
+            enableStacktrace = true
+            gradleParams = "--no-daemon"
+            dockerImage = "build-server:latest"
+        }
     }
 
     triggers {
