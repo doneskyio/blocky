@@ -31,7 +31,7 @@ def getCurrentVersion() {
     if (tag.length() > 0)
         return tag.trim()
     else
-        return "0.0.2-SNAPSHOT"
+        return "0.0.3-SNAPSHOT"
 }
 
 allprojects {
@@ -106,10 +106,18 @@ allprojects {
         }
         repositories {
             maven {
-                url = version.endsWith('SNAPSHOT') ? "https://oss.sonatype.org/content/repositories/snapshots" : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                credentials {
-                    username System.getenv("sonatype_username")
-                    password System.getenv("sonatype_password")
+                if (System.getenv("donesky_nexus_username") != null) {
+                    url = version.endsWith('SNAPSHOT') ? "https://artifacts.donesky.dev/repository/snapshots" : "https://artifacts.donesky.dev/repository/internal"
+                    credentials {
+                        username System.getenv("donesky_nexus_username")
+                        password System.getenv("donesky_nexus_password")
+                    }
+                } else {
+                    url = version.endsWith('SNAPSHOT') ? "https://oss.sonatype.org/content/repositories/snapshots" : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    credentials {
+                        username System.getenv("sonatype_username")
+                        password System.getenv("sonatype_password")
+                    }
                 }
             }
         }

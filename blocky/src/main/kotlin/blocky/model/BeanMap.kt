@@ -15,6 +15,7 @@
  */
 package blocky.model
 
+import blocky.BlockyException
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -30,7 +31,10 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
         }
         val upperName = name[0].toUpperCase() + name.substring(1)
         val getterName = "get$upperName"
-        property = clazz.getDeclaredMethod(getterName) ?: clazz.getMethod(getterName)
+        property =
+            try { clazz.getDeclaredMethod(getterName) } catch (e: NoSuchMethodException) { null }
+            ?: try { clazz.getMethod(getterName) } catch (e: NoSuchMethodException) { throw BlockyException(e) }
+            ?: throw BlockyException("Failed to find property: $name")
         propertyCache[name] = property
         return property
     }

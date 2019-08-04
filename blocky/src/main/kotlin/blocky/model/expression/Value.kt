@@ -56,6 +56,8 @@ internal class ContextValue(private val name: String) : Value {
             return true
         if (comparator == Comparator.NotEquals && value != otherValue)
             return true
+        if (value == NullValue || otherValue == NullValue)
+            return false
         return when (value) {
             is String -> {
                 when (otherValue) {
