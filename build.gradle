@@ -106,25 +106,27 @@ allprojects {
         }
         repositories {
             maven {
-                if (System.getenv("donesky_nexus_username") != null) {
-                    url = version.endsWith('SNAPSHOT') ? "https://artifacts.donesky.dev/repository/snapshots" : "https://artifacts.donesky.dev/repository/internal"
-                    credentials {
-                        username System.getenv("donesky_nexus_username")
-                        password System.getenv("donesky_nexus_password")
-                    }
-                } else {
+                if (System.getenv("sonatype_username") != null) {
                     url = version.endsWith('SNAPSHOT') ? "https://oss.sonatype.org/content/repositories/snapshots" : "https://oss.sonatype.org/service/local/staging/deploy/maven2"
                     credentials {
                         username System.getenv("sonatype_username")
                         password System.getenv("sonatype_password")
+                    }
+                } else {
+                    url = version.endsWith('SNAPSHOT') ? "https://artifacts.donesky.dev/repository/snapshots" : "https://artifacts.donesky.dev/repository/internal"
+                    credentials {
+                        username System.getenv("donesky_nexus_username")
+                        password System.getenv("donesky_nexus_password")
                     }
                 }
             }
         }
     }
 
-    signing {
-        sign publishing.publications.mavenJava
+    if (System.getenv("sonatype_username") != null) {
+        signing {
+            sign publishing.publications.mavenJava
+        }
     }
 
     if (name == "compiler-base")
