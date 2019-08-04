@@ -24,6 +24,12 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
 
     private val propertyCache = ConcurrentHashMap<String, Method>()
 
+    private fun findMethod(clazz: Class<*>, name: String): Method? =
+        clazz.superclass?.let { findMethod(it, name) }
+            ?: clazz.interfaces?.let { i -> i.forEach { iface -> findMethod(iface, name)?.let { return it } }; null }
+            ?: try { clazz.getDeclaredMethod(name) } catch (e: Exception) { null }
+            ?: try { clazz.getMethod(name) } catch (e: Exception) { null }
+
     private fun findProperty(name: String): Method? {
         var property = propertyCache[name]
         if (property != null) {
@@ -31,9 +37,8 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
         }
         val upperName = name[0].toUpperCase() + name.substring(1)
         val getterName = "get$upperName"
-        property =
-            try { clazz.getDeclaredMethod(getterName) } catch (e: NoSuchMethodException) { null }
-            ?: try { clazz.getMethod(getterName) } catch (e: NoSuchMethodException) { throw BlockyException(e) }
+        property = findMethod(clazz, getterName)
+            ?: findMethod(clazz, name)
             ?: throw BlockyException("Failed to find property: $name")
         propertyCache[name] = property
         return property
@@ -44,8 +49,9 @@ internal class BeanMap private constructor(private val clazz: Class<*>) {
         var currentMap = this
         var currentObj = `object`
         path.forEach { name ->
-            val property = currentMap.findProperty(name) ?: throw IllegalArgumentException("Cannot find path: $path on $`object`")
-            result = property.invoke(currentObj)
+            val property =
+                currentMap.findProperty(name) ?: throw IllegalArgumentException("Cannot find path: $path on $`object`")
+            result = try { property.invoke(currentObj) } catch (e: IllegalAccessException) { null }
             result?.let {
                 currentMap = BeanMap(it.javaClass)
                 currentObj = it

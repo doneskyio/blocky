@@ -813,6 +813,40 @@ class TemplateTests {
             """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testSizeMethod() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[if [list.size == 0]]
+                |Zero!
+                |[/if]
+                |[if [list2.size == 1]]
+                |One!
+                |[/if]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("list" to emptyList<String>(), "list2" to listOf("hello")))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testSizeMethod - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |Zero!
+            |One!
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)
