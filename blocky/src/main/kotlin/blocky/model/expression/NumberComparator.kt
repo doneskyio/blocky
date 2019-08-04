@@ -20,6 +20,7 @@ import java.math.BigDecimal
 interface NumberComparator {
 
     fun compareTo(number: Number, other: Number): Int
+    fun notEquals(number: Number, other: Number): Boolean
 
     companion object {
 
@@ -30,9 +31,10 @@ interface NumberComparator {
 open class BaseNumberComparator : NumberComparator {
 
     override fun compareTo(number: Number, other: Number): Int = number.compareTo(other)
+    override fun notEquals(number: Number, other: Number) = number != other
 }
 
-private fun Number.compareTo(other: Number): Int = when (this) {
+fun Number.compareTo(other: Number): Int = when (this) {
     is Int -> compareTo(other.toInt())
     is Float -> compareTo(other.toFloat())
     is Long -> compareTo(other.toLong())

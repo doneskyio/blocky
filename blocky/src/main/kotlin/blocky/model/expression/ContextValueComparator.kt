@@ -59,8 +59,8 @@ open class BaseContextValueComparator : ContextValueComparator {
 }
 
 internal fun Number.compareTo(other: Number, comparator: Comparator) = when (comparator) {
-    Comparator.Equals -> this == other
-    Comparator.NotEquals -> this != other
+    Comparator.Equals -> NumberComparator.comparator.compareTo(this, other) == 0
+    Comparator.NotEquals -> NumberComparator.comparator.notEquals(this, other)
     else -> {
         when (comparator) {
             Comparator.GreaterThan -> NumberComparator.comparator.compareTo(this, other) == 1

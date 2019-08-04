@@ -178,4 +178,11 @@ class ExpressionTests {
         assertFalse(expression.evaluate(Context(mapOf("a" to 2, "b" to 1))))
         assertTrue(expression.evaluate(Context(mapOf("a" to 1, "b" to 2))))
     }
+
+    @Test
+    fun testLongToInt() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        assertTrue(expression.evaluate(Context(mapOf("a" to 0, "b" to 0L))))
+    }
 }
