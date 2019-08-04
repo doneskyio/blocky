@@ -25,7 +25,7 @@ internal open class VariableBlock(
     defaultValue: String?
 ) : Node {
 
-    private val contextName = name.substring(VariableBlock.contextPrefix.length)
+    private val contextName = name.substring(contextPrefix.length)
     private val defaultValue = defaultValue?.toByteArray(Charsets.UTF_8)
 
     override fun write(context: Context, out: OutputStream) {

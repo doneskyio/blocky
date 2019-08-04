@@ -22,6 +22,7 @@ import blocky.model.IfBlock
 import blocky.model.expression.Expression
 import java.io.ByteArrayInputStream
 import java.nio.file.Path
+import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -31,7 +32,10 @@ class ExpressionTests {
 
     private val String.expression: Expression
         get() {
-            val template = Compiler.compile(Path.of("template.html"), ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray()))
+            val template = Compiler.compile(
+                Path.of("template.html"),
+                ByteArrayInputStream("[template][if [$this]][/if][/template]".toByteArray())
+            )
             val block = (template as CompiledTemplate).children.first() as IfBlock
             return block.expression
         }
@@ -139,5 +143,39 @@ class ExpressionTests {
         val expression = "!(1 > 1 && (1 > 1 || 1 == 1))".expression
         assertEquals("!(1 > 1 && (1 > 1 || 1 == 1))", expression.toString())
         assertTrue(expression.evaluate(Context()))
+    }
+
+    @Test
+    fun testDate() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        val now = Date()
+        assertTrue(expression.evaluate(Context(mapOf("a" to now, "b" to now))))
+    }
+
+    @Test
+    fun testDate2() {
+        val expression = "a < b".expression
+        assertEquals("(a < b)", expression.toString())
+        val now = System.currentTimeMillis()
+        val a = Date(now)
+        val b = Date(now + 60_000)
+        assertTrue(expression.evaluate(Context(mapOf("a" to a, "b" to b))))
+    }
+
+    @Test
+    fun testGt() {
+        val expression = "a > b".expression
+        assertEquals("(a > b)", expression.toString())
+        assertFalse(expression.evaluate(Context(mapOf("a" to 1, "b" to 2))))
+        assertTrue(expression.evaluate(Context(mapOf("a" to 2, "b" to 1))))
+    }
+
+    @Test
+    fun testLt() {
+        val expression = "a < b".expression
+        assertEquals("(a < b)", expression.toString())
+        assertFalse(expression.evaluate(Context(mapOf("a" to 2, "b" to 1))))
+        assertTrue(expression.evaluate(Context(mapOf("a" to 1, "b" to 2))))
     }
 }

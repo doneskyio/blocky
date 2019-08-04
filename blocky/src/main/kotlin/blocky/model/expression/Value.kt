@@ -16,6 +16,7 @@
 package blocky.model.expression
 
 import blocky.model.Context
+import java.util.Date
 
 internal interface Value {
 
@@ -24,126 +25,82 @@ internal interface Value {
 
 internal object NullValue : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean {
-        return other == this
-    }
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = other == this
 
     override fun toString(): String = "null"
 }
 
 internal class BooleanValue(internal val value: Boolean) : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator) =
-        when (other) {
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other)
+
+    override fun toString(): String = value.toString()
+
+    companion object {
+
+        fun compareTo(value: Boolean, other: Any?) = when (other) {
             is BooleanValue -> value == other.value
             is Boolean -> value == other
             else -> false
         }
-
-    override fun toString(): String = value.toString()
+    }
 }
 
-internal class ContextValue(private val name: String) : Value {
+internal class ContextValue(internal val name: String) : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean {
-        val otherValue = if (other is ContextValue) {
-            context[other.name] ?: return false
-        } else {
-            other
-        }
-        val value = context[name] ?: return false
-        if (comparator == Comparator.Equals && value == otherValue)
-            return true
-        if (comparator == Comparator.NotEquals && value != otherValue)
-            return true
-        if (value == NullValue || otherValue == NullValue)
-            return false
-        return when (value) {
-            is String -> {
-                when (otherValue) {
-                    is String -> value.compareTo(otherValue, comparator)
-                    is StringValue -> value.compareTo(otherValue.value, comparator)
-                    else -> false
-                }
-            }
-            is Number -> {
-                when (otherValue) {
-                    is Number -> value.compareTo(otherValue, comparator)
-                    is NumberValue<*> -> value.compareTo(otherValue.value, comparator)
-                    else -> false
-                }
-            }
-            is Boolean -> {
-                when (otherValue) {
-                    is BooleanValue -> value == otherValue.value
-                    is Boolean -> value == otherValue
-                    else -> false
-                }
-            }
-            else -> TODO("Unsupported value type: $value")
-        }
-    }
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean =
+        ContextValueComparator.comparator.compareTo(context, name, other, comparator)
 
     override fun toString() = name
 }
 
 internal class StringValue(internal val value: String) : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator) =
-        when (other) {
-            is String -> value.compareTo(other, comparator)
-            is StringValue -> value.compareTo(other.value, comparator)
-            else -> false
-        }
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
 
     override fun toString() = "\"$value\""
+
+    companion object {
+
+        fun compareTo(value: String, other: Any?, comparator: Comparator) =
+            when (other) {
+                is String -> value.compareTo(other, comparator)
+                is StringValue -> value.compareTo(other.value, comparator)
+                else -> false
+            }
+    }
+}
+
+internal class DateValue(internal val value: Date) : Value {
+
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
+
+    override fun toString() = value.toString()
+
+    companion object {
+
+        fun compareTo(value: Date, other: Any?, comparator: Comparator) =
+            when (other) {
+                is Date -> value.compareTo(other, comparator)
+                is DateValue -> value.compareTo(other.value, comparator)
+                else -> false
+            }
+    }
 }
 
 internal open class NumberValue<out T : Number>(internal val value: T) : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator): Boolean =
-        when (other) {
-            is Number -> value.compareTo(other, comparator)
-            is NumberValue<*> -> value.compareTo(other.value, comparator)
-            else -> false
-        }
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
 
     override fun toString() = value.toString()
-}
 
-private fun Number.compareTo(other: Number): Int = when (this) {
-    is Int -> compareTo(other.toInt())
-    is Float -> compareTo(other.toFloat())
-    is Long -> compareTo(other.toLong())
-    is Double -> compareTo(other.toDouble())
-    else -> TODO("Unsupported $this compareTo $other")
-}
+    companion object {
 
-private fun Number.compareTo(other: Number, comparator: Comparator) = when (comparator) {
-    Comparator.Equals -> this == other
-    Comparator.NotEquals -> this != other
-    else -> {
-        when (comparator) {
-            Comparator.GreaterThan -> compareTo(other) == 1
-            Comparator.GreaterThanEquals -> {
-                val c = compareTo(other)
-                c == 1 || c == 0
+        fun compareTo(value: Number, other: Any?, comparator: Comparator) =
+            when (other) {
+                is Number -> value.compareTo(other, comparator)
+                is NumberValue<*> -> value.compareTo(other.value, comparator)
+                else -> false
             }
-            Comparator.LessThan -> compareTo(other) == -1
-            Comparator.LessThanEquals -> {
-                val c = compareTo(other)
-                c == -1 || c == 0
-            }
-            else -> throw UnsupportedOperationException("Unsupported comparator: $comparator")
-        }
     }
-}
-
-private fun <T> Comparable<T>.compareTo(other: T, comparator: Comparator) = when (comparator) {
-    Comparator.Equals -> this == other
-    Comparator.NotEquals -> this != other
-    Comparator.GreaterThan -> this < other
-    Comparator.GreaterThanEquals -> this <= other
-    Comparator.LessThan -> this > other
-    Comparator.LessThanEquals -> this >= other
 }
