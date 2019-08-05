@@ -37,7 +37,7 @@ class Context(private val context: Map<String, Any?> = emptyMap()) {
     operator fun get(name: String): Any? {
         val path = name.split(".")
         val itemName = path.first()
-        if (!context.containsKey(itemName))
+        if (!contains(itemName))
             return null
         if (path.size > 1) {
             val item = internalGet(itemName) ?: return NullValue
@@ -50,6 +50,12 @@ class Context(private val context: Map<String, Any?> = emptyMap()) {
 
     private fun internalGet(name: String) =
         context[name] ?: if (::parentContext.isInitialized) parentContext[name] else null
+
+    private fun contains(name: String) =
+        context.containsKey(name) || parentContains(name)
+
+    private fun parentContains(name: String): Boolean =
+        if (::parentContext.isInitialized) parentContext.contains(name) else false
 
     fun newChildContext(context: Map<String, Any?>): Context =
         Context(context, this)
