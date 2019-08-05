@@ -15,6 +15,7 @@
  */
 package blocky.model.expression
 
+import blocky.compiler.CompilerException
 import blocky.model.Context
 import java.util.Date
 
@@ -102,5 +103,25 @@ internal open class NumberValue<out T : Number>(internal val value: T) : Value {
                 is NumberValue<*> -> value.compareTo(other.value, comparator)
                 else -> false
             }
+    }
+}
+
+internal open class EnumValue(internal val value: Enum<*>) : Value {
+
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
+
+    override fun toString() = value.toString()
+
+    companion object {
+
+        fun compareTo(value: Enum<*>, other: Any?, comparator: Comparator): Boolean {
+            if (comparator != Comparator.Equals && comparator != Comparator.NotEquals)
+                throw CompilerException("Unsupported comparator: $comparator")
+            return when (other) {
+                is Enum<*> -> if (comparator == Comparator.Equals) value == other else value != other
+                is EnumValue -> if (comparator == Comparator.Equals) value == other.value else value != other.value
+                else -> false
+            }
+        }
     }
 }

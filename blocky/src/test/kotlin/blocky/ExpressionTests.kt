@@ -28,6 +28,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+enum class TestEnum {
+    A,
+    B
+}
+
 class ExpressionTests {
 
     private val String.expression: Expression
@@ -39,6 +44,34 @@ class ExpressionTests {
             val block = (template as CompiledTemplate).children.first() as IfBlock
             return block.expression
         }
+
+    @Test
+    fun testContextEnum1() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        assertTrue(expression.evaluate(Context(mapOf("a" to TestEnum.A, "b" to TestEnum.A))))
+    }
+
+    @Test
+    fun testContextEnum2() {
+        val expression = "a != b".expression
+        assertEquals("(a != b)", expression.toString())
+        assertTrue(expression.evaluate(Context(mapOf("a" to TestEnum.A, "b" to TestEnum.B))))
+    }
+
+    @Test
+    fun testContextEnum3() {
+        val expression = "a == b".expression
+        assertEquals("(a == b)", expression.toString())
+        assertFalse(expression.evaluate(Context(mapOf("a" to TestEnum.A, "b" to TestEnum.B))))
+    }
+
+    @Test
+    fun testContextEnum4() {
+        val expression = "a != b".expression
+        assertEquals("(a != b)", expression.toString())
+        assertFalse(expression.evaluate(Context(mapOf("a" to TestEnum.A, "b" to TestEnum.A))))
+    }
 
     @Test
     fun testContextBoolean1() {

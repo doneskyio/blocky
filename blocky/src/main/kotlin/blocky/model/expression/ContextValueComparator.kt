@@ -42,6 +42,7 @@ open class BaseContextValueComparator : ContextValueComparator {
             is Number -> NumberValue.compareTo(value, otherValue, comparator)
             is Boolean -> BooleanValue.compareTo(value, otherValue)
             is Date -> DateValue.compareTo(value, otherValue, comparator)
+            is Enum<*> -> EnumValue.compareTo(value, otherValue, comparator)
             else -> TODO("Unsupported value type: $value")
         }
 
