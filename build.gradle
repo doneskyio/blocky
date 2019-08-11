@@ -9,7 +9,6 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:$ktlint_gradle_version"
     }
@@ -132,7 +131,6 @@ allprojects {
     if (name == "compiler-base")
         return
 
-    apply plugin: "kotlinx-serialization"
     apply plugin: "jacoco"
     apply plugin: "org.jetbrains.dokka"
     apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -140,7 +138,6 @@ allprojects {
     dependencies {
         compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
         compile("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
-        compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlin_serialization_version")
         compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutine_version")
 
         compile("ch.qos.logback:logback-classic:$logback_version")
