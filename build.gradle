@@ -20,17 +20,12 @@ task version {
     }
 }
 
-def getCurrentVersion() {
-    def versionTag = new ByteArrayOutputStream()
-    exec {
-        commandLine "git", "tag", "-l",  "--points-at", "HEAD"
-        standardOutput = versionTag
+static getCurrentVersion() {
+    def tag = System.getenv("CI_COMMIT_TAG")
+    if (tag != null && tag != "") {
+        return tag
     }
-    def tag = versionTag.toString().trim().replaceAll("\r", "").replaceAll("\n", "")
-    if (tag.length() > 0)
-        return tag.trim()
-    else
-        return "0.0.4-SNAPSHOT"
+    return "0.0.4-SNAPSHOT"
 }
 
 allprojects {
@@ -112,7 +107,7 @@ allprojects {
                         password System.getenv("sonatype_password")
                     }
                 } else {
-                    url = version.endsWith('SNAPSHOT') ? "https://artifacts.donesky.dev/repository/snapshots" : "https://artifacts.donesky.dev/repository/internal"
+                    url = "https://artifacts.donesky.dev/donesky"
                     credentials {
                         username System.getenv("donesky_nexus_username")
                         password System.getenv("donesky_nexus_password")
@@ -213,7 +208,7 @@ task codeCoverageReport(type: JacocoReport) {
     reports {
         xml.enabled true
         xml.setDestination(file("${buildDir}/reports/jacoco/report.xml"))
-        html.enabled false
+        html.enabled true
         csv.enabled false
     }
 }

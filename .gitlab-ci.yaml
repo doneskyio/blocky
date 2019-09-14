@@ -1,0 +1,25 @@
+stages:
+  - test
+  - publish
+
+before_script:
+  - export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-12.jdk/Contents/Home
+  - export PATH=$JAVA_HOME/bin:$PATH
+  - rm -Rf ~/.gradle
+
+test:
+  stage: test
+  tags:
+    - macos
+  before_script:
+    - java -version
+  script:
+    - ./gradlew --refresh-dependencies --no-daemon --no-build-cache -Dkotlin.compiler.execution.strategy="in-process" clean check codeCoverageReport
+    - cat build/reports/jacoco/codeCoverageReport/html/index.html | grep -o '<tfoot>.*</tfoot>'
+
+publish:
+  stage: publish
+  tags:
+    - macos
+  script:
+    - ./gradlew --refresh-dependencies --no-daemon --no-build-cache -Dkotlin.compiler.execution.strategy="in-process" clean publish
