@@ -33,6 +33,7 @@ block
     | BLOCK_OPEN blockName blockAttribute* BLOCK_SLASH_CLOSE
     | blockCtx
     | blockRef
+    | blockText
     ;
 
 blockEscape
@@ -44,11 +45,11 @@ blockElse
     ;
 
 blockCtx
-    : BLOCK_OPEN blockCtxName blockAttribute* BLOCK_CLOSE blockContent
+    : BLOCK_OPEN blockCtxName blockAttribute* BLOCK_CLOSE block
     ;
 
 blockRef
-    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE blockContent
+    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE block
     ;
 
 blockContent

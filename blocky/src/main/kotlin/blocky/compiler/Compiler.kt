@@ -146,6 +146,7 @@ private fun BlockyParser.BlockContext.addNodes(path: Path, parent: NodeBuilderCo
                     }
                 )
             }
+            is BlockyParser.BlockTextContext -> parent.addNode(TextBuilder().apply { text = it.text })
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
     }
@@ -184,6 +185,7 @@ private fun ParserRuleContext.addCtxOrRefNodes(path: Path, parent: BlockBuilder)
             is BlockyParser.BlockRefNameContext -> block.name = it.text
             is BlockyParser.BlockAttributeContext -> it.addTo(block)
             is BlockyParser.BlockContentContext -> it.addNodes(path, parent)
+            is BlockyParser.BlockContext -> it.addNodes(path, parent)
             else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
         }
     }
