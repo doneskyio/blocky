@@ -49,8 +49,12 @@ class Context(context: Map<String, Any?> = emptyMap()) {
         }
     }
 
-    internal operator fun set(name: String, value: String) {
+    internal operator fun set(name: String, value: String): Boolean {
+        if (::parentContext.isInitialized && parentContext.set(name, value)) {
+            return true
+        }
         context[name] = value
+        return true
     }
 
     private fun internalGet(name: String) =
