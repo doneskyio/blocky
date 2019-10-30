@@ -17,7 +17,6 @@ package blocky.model
 
 import blocky.Blocky
 import blocky.model.expression.NullValue
-import blocky.model.expression.NumberValue
 import blocky.model.expression.StringValue
 import java.io.OutputStream
 
