@@ -16,6 +16,9 @@
 package blocky.model
 
 import blocky.Blocky
+import blocky.model.expression.NullValue
+import blocky.model.expression.NumberValue
+import blocky.model.expression.StringValue
 import java.io.OutputStream
 
 internal open class VariableBlock(
@@ -34,7 +37,13 @@ internal open class VariableBlock(
                 val formatter = Blocky.getFormatter(formatter)
                 formatter.format(context, formatterConfig, contextName)
             } else {
-                context[contextName]?.toString()?.toByteArray(Charsets.UTF_8)
+                context[contextName]?.let {
+                    when (it) {
+                        is StringValue -> it.value
+                        is NullValue -> null
+                        else -> it
+                    }
+                }?.toString()?.toByteArray(Charsets.UTF_8)
             } ?: defaultValue
         output?.let { out.write(it) }
     }

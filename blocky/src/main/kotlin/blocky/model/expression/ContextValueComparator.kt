@@ -39,10 +39,15 @@ open class BaseContextValueComparator : ContextValueComparator {
     protected open fun compareTo(value: Any, otherValue: Any, comparator: Comparator) =
         when (value) {
             is String -> StringValue.compareTo(value, otherValue, comparator)
+            is StringValue -> StringValue.compareTo(value.value, otherValue, comparator)
             is Number -> NumberValue.compareTo(value, otherValue, comparator)
+            is NumberValue<*> -> NumberValue.compareTo(value.value, otherValue, comparator)
             is Boolean -> BooleanValue.compareTo(value, otherValue)
+            is BooleanValue -> BooleanValue.compareTo(value.value, otherValue)
             is Date -> DateValue.compareTo(value, otherValue, comparator)
+            is DateValue -> DateValue.compareTo(value.value, otherValue, comparator)
             is Enum<*> -> EnumValue.compareTo(value, otherValue, comparator)
+            is EnumValue -> EnumValue.compareTo(value.value, otherValue, comparator)
             else -> TODO("Unsupported value type: $value")
         }
 
