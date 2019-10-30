@@ -50,8 +50,8 @@ class Context(context: Map<String, Any?> = emptyMap()) {
     }
 
     internal operator fun set(name: String, value: String): Boolean {
-        if (::parentContext.isInitialized && parentContext.set(name, value)) {
-            return true
+        if (parentContains(name)) {
+            return parentContext.set(name, value)
         }
         context[name] = value
         return true
