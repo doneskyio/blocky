@@ -16,6 +16,7 @@
 package blocky.model
 
 import blocky.model.expression.NullValue
+import blocky.model.expression.StringValue
 
 class Context(context: Map<String, Any?> = emptyMap()) {
 
@@ -53,7 +54,15 @@ class Context(context: Map<String, Any?> = emptyMap()) {
         if (parentContains(name)) {
             return parentContext.set(name, value)
         }
-        context[name] = value
+        context[name] = StringValue(value)
+        return true
+    }
+
+    internal fun remove(name: String): Boolean {
+        if (parentContains(name)) {
+            return parentContext.remove(name)
+        }
+        context.remove(name)
         return true
     }
 
