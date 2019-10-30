@@ -28,9 +28,10 @@ class Context(context: Map<String, Any?> = emptyMap()) {
         this.parentContext = parentContext
     }
 
-    internal fun getPlaceholder(name: String): Placeholder? = placeholders[name]
+    internal fun getPlaceholder(name: String): Placeholder? =
+        placeholders[name] ?: if (::parentContext.isInitialized) parentContext.getPlaceholder(name) else null
 
-    internal fun hasPlaceholder(name: String) = placeholders.containsKey(name)
+    internal fun hasPlaceholder(name: String): Boolean = placeholders.containsKey(name) || (::parentContext.isInitialized && parentContext.hasPlaceholder(name))
 
     internal fun setPlaceholder(name: String, placeholder: Placeholder) {
         placeholders[name] = placeholder
