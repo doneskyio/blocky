@@ -37,6 +37,21 @@ internal class BooleanValue(internal val value: Boolean) : Value {
 
     override fun toString(): String = value.toString()
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BooleanValue
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
     companion object {
 
         fun compareTo(value: Boolean, other: Any?) = when (other) {
@@ -61,6 +76,21 @@ internal class StringValue(internal val value: String) : Value {
 
     override fun toString() = "\"$value\""
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as StringValue
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
     companion object {
 
         fun compareTo(value: String, other: Any?, comparator: Comparator) =
@@ -77,6 +107,21 @@ internal class DateValue(internal val value: Date) : Value {
     override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
 
     override fun toString() = value.toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DateValue
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 
     companion object {
 
@@ -95,6 +140,21 @@ internal open class NumberValue<out T : Number>(internal val value: T) : Value {
 
     override fun toString() = value.toString()
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NumberValue<*>
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
     companion object {
 
         fun compareTo(value: Number, other: Any?, comparator: Comparator) =
@@ -111,6 +171,21 @@ internal open class EnumValue(internal val value: Enum<*>) : Value {
     override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
 
     override fun toString() = value.toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EnumValue
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 
     companion object {
 
