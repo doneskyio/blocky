@@ -32,7 +32,7 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
     private val _children = mutableListOf<NodeBuilder>()
 
     var name: String? = null
-    val attributes = mutableMapOf<String, String>()
+    override val attributes = mutableMapOf<String, String>()
 
     override val children: List<NodeBuilder>
         get() = _children

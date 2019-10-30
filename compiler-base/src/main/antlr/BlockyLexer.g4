@@ -52,6 +52,15 @@ BLOCK_ELSE
     ;
 
 fragment
+BLOCK_CTX_SET_NAME
+    : 'ctx:set'
+    ;
+
+BLOCK_CTX_SET
+    : BLOCK_CTX_SET_NAME
+    ;
+
+fragment
 BLOCK_CTX_NAME
     : 'ctx:' BLOCK_ATTRIBUTE_NAME
     ;

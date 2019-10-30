@@ -16,24 +16,16 @@
 package blocky.model.builders
 
 import blocky.model.Node
+import blocky.model.SetBlock
+import java.nio.file.Path
 
-internal interface NodeBuilderContainer : NodeBuilder {
+internal class SetBuilder(val path: Path) : BaseNodeBuilder() {
 
-    val children: List<NodeBuilder>
-
-    fun addNode(node: NodeBuilder)
-}
-
-internal interface NodeBuilder {
-
-    var parent: NodeBuilder?
-    val attributes: MutableMap<String, String>
-
-    fun build(parent: Node): Node
-}
-
-internal abstract class BaseNodeBuilder : NodeBuilder {
-
-    override var parent: NodeBuilder? = null
     override val attributes = mutableMapOf<String, String>()
+
+    override fun build(parent: Node): SetBlock {
+        check(attributes.size == 1) { "ctx:set can only have one attribute: $attributes" }
+        val e = attributes.entries.first()
+        return SetBlock(e.key, e.value)
+    }
 }

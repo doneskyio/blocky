@@ -29,10 +29,11 @@ blocks
 
 block
     : blockEscape
-    | BLOCK_OPEN blockName blockAttribute* blockExpression* BLOCK_CLOSE blockContent BLOCK_OPEN BLOCK_SLASH blockName BLOCK_CLOSE
-    | BLOCK_OPEN blockName blockAttribute* BLOCK_SLASH_CLOSE
+    | blockCtxSet
     | blockCtx
     | blockRef
+    | BLOCK_OPEN blockName blockAttribute* blockExpression* BLOCK_CLOSE blockContent BLOCK_OPEN BLOCK_SLASH blockName BLOCK_CLOSE
+    | BLOCK_OPEN blockName blockAttribute* BLOCK_SLASH_CLOSE
     | blockText
     ;
 
@@ -44,16 +45,24 @@ blockElse
     : BLOCK_OPEN blockElseName blockExpression* BLOCK_CLOSE blockContent
     ;
 
+blockCtxSet
+    : BLOCK_OPEN blockCtxSetName blockAttribute* BLOCK_CLOSE
+    ;
+
 blockCtx
-    : BLOCK_OPEN blockCtxName blockAttribute* BLOCK_CLOSE block
+    : BLOCK_OPEN blockCtxName blockAttribute* BLOCK_CLOSE
     ;
 
 blockRef
-    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE block
+    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE
+    ;
+
+blockSet
+    : BLOCK_OPEN blockRefName blockAttribute* BLOCK_CLOSE
     ;
 
 blockContent
-    : blockText? ((blockElse | blockCtx | blockRef | block | BLOCK_COMMENT) blockText?)*
+    : blockText? ((blockElse | block | BLOCK_COMMENT) blockText?)*
     ;
 
 blockAttribute
@@ -103,6 +112,10 @@ blockElseName
 
 blockCtxName
     : BLOCK_CTX
+    ;
+
+blockCtxSetName
+    : BLOCK_CTX_SET
     ;
 
 blockRefName

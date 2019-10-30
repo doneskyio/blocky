@@ -93,6 +93,16 @@ class TemplateTests {
         |[/template]
         """.trimMargin()
 
+    val template4 =
+        """
+        |[template name="tpl2"][ctx:set v="1"]
+        |[ctx:v]
+        |[if [v == "1"]]
+        |Hello
+        |[/if]
+        |[/template]
+        """.trimMargin()
+
     @Test
     fun testTemplate1() {
         val template = Compiler.compile(Path.of("template.html"), template1)
@@ -175,6 +185,22 @@ class TemplateTests {
         val expected =
             """
         |Hello Else
+        |
+        """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testTemplate4_set() {
+        val template = Compiler.compile(Path.of("template.html"), template4)
+        val context = Context(mapOf("title" to "Hello World"))
+        val content = ByteArrayOutputStream().use {
+            template.write(context, it)
+            it.toString()
+        }
+        val expected =
+            """
+        |1Hello
         |
         """.trimMargin()
         assertEquals(expected, content)

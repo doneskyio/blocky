@@ -17,12 +17,13 @@ package blocky.model
 
 import blocky.model.expression.NullValue
 
-class Context(private val context: Map<String, Any?> = emptyMap()) {
+class Context(context: Map<String, Any?> = emptyMap()) {
 
+    private val context: MutableMap<String, Any?> = context.toMutableMap()
     private val placeholders = mutableMapOf<String, Placeholder>()
     private lateinit var parentContext: Context
 
-    private constructor(context: Map<String, Any?>, parentContext: Context) : this(context) {
+    private constructor(context: MutableMap<String, Any?>, parentContext: Context) : this(context) {
         this.parentContext = parentContext
     }
 
@@ -48,6 +49,10 @@ class Context(private val context: Map<String, Any?> = emptyMap()) {
         }
     }
 
+    internal operator fun set(name: String, value: String) {
+        context[name] = value
+    }
+
     private fun internalGet(name: String) =
         context[name] ?: if (::parentContext.isInitialized) parentContext[name] else null
 
@@ -58,5 +63,5 @@ class Context(private val context: Map<String, Any?> = emptyMap()) {
         if (::parentContext.isInitialized) parentContext.contains(name) else false
 
     fun newChildContext(context: Map<String, Any?>): Context =
-        Context(context, this)
+        Context(context.toMutableMap(), this)
 }

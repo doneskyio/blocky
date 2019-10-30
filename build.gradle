@@ -25,7 +25,7 @@ static getCurrentVersion() {
     if (tag != null && tag != "") {
         return tag
     }
-    return "0.0.4-SNAPSHOT"
+    return "0.0.5-SNAPSHOT"
 }
 
 allprojects {

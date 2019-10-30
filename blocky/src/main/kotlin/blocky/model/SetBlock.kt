@@ -13,27 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blocky.model.builders
+package blocky.model
 
-import blocky.model.Node
+import java.io.OutputStream
 
-internal interface NodeBuilderContainer : NodeBuilder {
+class SetBlock(val name: String, val value: String) : Node {
 
-    val children: List<NodeBuilder>
-
-    fun addNode(node: NodeBuilder)
-}
-
-internal interface NodeBuilder {
-
-    var parent: NodeBuilder?
-    val attributes: MutableMap<String, String>
-
-    fun build(parent: Node): Node
-}
-
-internal abstract class BaseNodeBuilder : NodeBuilder {
-
-    override var parent: NodeBuilder? = null
-    override val attributes = mutableMapOf<String, String>()
+    override fun write(context: Context, out: OutputStream) {
+        context[name] = value
+    }
 }

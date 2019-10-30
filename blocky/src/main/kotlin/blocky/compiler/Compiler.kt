@@ -24,8 +24,10 @@ import blocky.model.builders.IfBuilder
 import blocky.model.builders.MutableExpression
 import blocky.model.builders.MutableExpressionGroup
 import blocky.model.builders.MutableValueExpression
+import blocky.model.builders.NodeBuilder
 import blocky.model.builders.NodeBuilderContainer
 import blocky.model.builders.RootBuilder
+import blocky.model.builders.SetBuilder
 import blocky.model.builders.TextBuilder
 import blocky.model.expression.BooleanValue
 import blocky.model.expression.Comparator
@@ -48,6 +50,8 @@ import java.nio.file.Path
 
 internal object Compiler {
 
+    var traceEnabled = false
+
     fun compile(path: Path, `in`: String): BlockyTemplate =
         compile(path, ByteArrayInputStream(`in`.toByteArray(Charsets.UTF_8)))
 
@@ -57,7 +61,7 @@ internal object Compiler {
         val tokenStream = CommonTokenStream(lexer)
         val listener = TemplateParserListenerImpl(path)
         val parser = BlockyParser(tokenStream)
-        // parser.isTrace = true
+        parser.isTrace = traceEnabled
         parser.addParseListener(listener)
         parser.addErrorListener(ErrorListener())
         parser.template()
@@ -134,10 +138,11 @@ private fun BlockyParser.BlockContext.addNodes(path: Path, parent: NodeBuilderCo
                     else -> throw CompilerException("Unsupported expression: ${b.javaClass.simpleName}")
                 }
             }
-            is BlockyParser.BlockContentContext -> it.addNodes(path, block ?: throw IllegalArgumentException())
-            is BlockyParser.BlockContext -> it.addNodes(path, block ?: throw IllegalArgumentException())
-            is BlockyParser.BlockCtxContext -> it.addCtxOrRefNodes(path, block ?: throw IllegalArgumentException())
-            is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(path, block ?: throw IllegalArgumentException())
+            is BlockyParser.BlockContentContext -> it.addNodes(path, block ?: parent)
+            is BlockyParser.BlockContext -> it.addNodes(path, parent)
+            is BlockyParser.BlockCtxContext -> it.addCtxOrRefNodes(path, block ?: parent)
+            is BlockyParser.BlockRefContext -> it.addCtxOrRefNodes(path, block ?: parent)
+            is BlockyParser.BlockCtxSetContext -> it.addCtxSet(path, block ?: parent)
             is BlockyParser.BlockEscapeContext -> {
                 val textPart = it.text.substring("[[--".length)
                 parent.addNode(
@@ -152,7 +157,7 @@ private fun BlockyParser.BlockContext.addNodes(path: Path, parent: NodeBuilderCo
     }
 }
 
-private fun BlockyParser.BlockAttributeContext.addTo(builder: BlockBuilder) {
+private fun BlockyParser.BlockAttributeContext.addTo(builder: NodeBuilder) {
     val name = blockAttributeName().BLOCK_ATTRIBUTE_NAME().text
     val value = blockAttributeValue().ATTVALUE_VALUE().text
     if (builder.attributes.containsKey(name))
@@ -161,7 +166,7 @@ private fun BlockyParser.BlockAttributeContext.addTo(builder: BlockBuilder) {
     builder.attributes[name] = attributeValue.substring(0, value.length - 2)
 }
 
-private fun BlockyParser.BlockContentContext.addNodes(path: Path, parent: BlockBuilder) {
+private fun BlockyParser.BlockContentContext.addNodes(path: Path, parent: NodeBuilderContainer) {
     children?.forEach {
         when (it) {
             is TerminalNode -> { /* ignore */ }
@@ -175,7 +180,7 @@ private fun BlockyParser.BlockContentContext.addNodes(path: Path, parent: BlockB
     }
 }
 
-private fun ParserRuleContext.addCtxOrRefNodes(path: Path, parent: BlockBuilder) {
+private fun ParserRuleContext.addCtxOrRefNodes(path: Path, parent: NodeBuilderContainer) {
     val block = BlockBuilder(path)
     parent.addNode(block)
     children.forEach {
@@ -191,7 +196,20 @@ private fun ParserRuleContext.addCtxOrRefNodes(path: Path, parent: BlockBuilder)
     }
 }
 
-private fun BlockyParser.BlockElseContext.addNodes(path: Path, parent: BlockBuilder) {
+private fun ParserRuleContext.addCtxSet(path: Path, parent: NodeBuilderContainer) {
+    val block = SetBuilder(path)
+    parent.addNode(block)
+    children.forEach {
+        when (it) {
+            is TerminalNode -> { /* ignore */ }
+            is BlockyParser.BlockCtxSetNameContext -> { /* ignore */ }
+            is BlockyParser.BlockAttributeContext -> it.addTo(block)
+            else -> throw CompilerException("Unsupported: ${it.javaClass.simpleName}")
+        }
+    }
+}
+
+private fun BlockyParser.BlockElseContext.addNodes(path: Path, parent: NodeBuilderContainer) {
     val block = IfBuilder(path)
     parent.addNode(block)
     children?.forEach {

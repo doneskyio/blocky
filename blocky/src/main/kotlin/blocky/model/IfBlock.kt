@@ -53,14 +53,10 @@ internal class ElseBlock(
 ) : Block(name, children) {
 
     init {
-        if (parent !is IfBlock && parent !is ElseBlock)
-            throw IllegalArgumentException("Else block must be from an if/else block")
-        if (parent is ElseBlock && parent.expression == null && expression == null)
-            throw IllegalArgumentException("Duplicate catch all else block")
-        if (name == "elseif" && expression == null)
-            throw IllegalArgumentException("elseif must have an expression")
-        if (name == "else" && expression != null)
-            throw IllegalArgumentException("else cannot have an expression")
+        require(!(parent !is IfBlock && parent !is ElseBlock)) { "Else block must be from an if/else block" }
+        require(!(parent is ElseBlock && parent.expression == null && expression == null)) { "Duplicate catch all else block" }
+        require(!(name == "elseif" && expression == null)) { "elseif must have an expression" }
+        require(!(name == "else" && expression != null)) { "else cannot have an expression" }
     }
 
     private val elseBlocks by lazy { children.filterIsInstance<ElseBlock>() }
