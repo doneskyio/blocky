@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package blocky.model
 
 import blocky.Blocky
@@ -35,6 +34,16 @@ internal class CompiledTemplate(
         children.filter { it !is Placeholder }
     }
 
+    private val contextModifiers by lazy {
+        children.filterIsInstance<ContextModifierNode>()
+    }
+
+    init {
+        if (parentRef != null) {
+            check(nonPlaceholders.size == contextModifiers.size) { "If there is a parent template, only placeholders and context modifiers are supported." }
+        }
+    }
+
     override fun write(context: Context, out: OutputStream) {
         placeholders.forEach {
             if (!context.hasPlaceholder(it.name))
@@ -43,6 +52,7 @@ internal class CompiledTemplate(
         if (parentRef == null) {
             nonPlaceholders.forEach { it.write(context, out) }
         } else {
+            contextModifiers.forEach { it.modify(context) }
             Blocky[parentRef].write(context, out)
         }
     }

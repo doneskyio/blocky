@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package blocky.model
 
-import java.io.OutputStream
+interface ContextModifierNode : Node {
 
-class SetBlock(val name: String, val value: String) : ContextModifierNode {
-
-    override fun modify(context: Context) {
-        context[name] = value
-    }
-
-    override fun write(context: Context, out: OutputStream) = modify(context)
+    fun modify(context: Context)
 }
