@@ -29,6 +29,14 @@ internal interface NodeContainer : Node {
 
 internal abstract class AbstractNodeContainer(override val children: List<Node>) : NodeContainer {
 
+    internal open fun validate() {
+        children.forEach {
+            if (it is AbstractNodeContainer) {
+                it.validate()
+            }
+        }
+    }
+
     override fun write(context: Context, out: OutputStream): Unit = children.forEach { it.write(context, out) }
 
     override fun toString(): String {

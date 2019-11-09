@@ -17,13 +17,7 @@ package blocky.model
 
 import java.io.OutputStream
 
-internal class TextBlock(text: String) : Node {
-
-    private val text = when { // remove new line because of block
-        text.startsWith("\n") -> text.substring(1)
-        text.startsWith("\r\n") -> text.substring(2)
-        else -> text
-    }.toByteArray(Charsets.UTF_8)
+internal class TextBlock(private val text: ByteArray) : Node {
 
     override fun write(context: Context, out: OutputStream) = out.write(text)
 

@@ -44,7 +44,13 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
 
     override var parent: NodeBuilder? = null
 
-    override fun build(parent: Node): Node {
+    private fun Node.build(children: MutableList<Node>) {
+        _children.forEach {
+            it.build(this)?.let { children.add(it) }
+        }
+    }
+
+    override fun build(parent: Node): Node? {
         val name = name ?: throw CompilerException("Missing block name")
         return when {
             name == "root" -> {
@@ -57,9 +63,8 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
                 if (parent == RootBuilder.root) {
                     val children = mutableListOf<Node>()
                     val block = CompiledTemplate(path, children, attributes["parent"]?.let { path.resolveSibling(it) })
-                    _children.forEach {
-                        children.add(it.build(block))
-                    }
+                    block.build(children)
+                    block.validate()
                     block
                 } else {
                     throw CompilerException("Unsupported template location")
@@ -68,34 +73,26 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
             name == "placeholder" -> {
                 val children = mutableListOf<Node>()
                 val block = Placeholder(attributes.getValue("name"), children)
-                _children.forEach {
-                    children.add(it.build(block))
-                }
+                block.build(children)
                 block
             }
             name == "if" -> {
                 val children = mutableListOf<Node>()
                 val block = newIfBlock(parent, attributes["ctx"], children)
-                _children.forEach {
-                    children.add(it.build(block))
-                }
+                block.build(children)
                 block
             }
             name == "else" || name == "elseif" -> {
                 val children = mutableListOf<Node>()
                 val block = newElseBlock(parent, name, children)
-                _children.forEach {
-                    children.add(it.build(block))
-                }
+                block.build(children)
                 block
             }
             name == "for" -> {
                 val children = mutableListOf<Node>()
                 val variableName = attributes.entries.first()
                 val block = ForBlock(variableName.key, variableName.value, children)
-                _children.forEach {
-                    children.add(it.build(block))
-                }
+                block.build(children)
                 block
             }
             name == "ref:template" -> TemplateRef(path, attributes["name"]?.let { path.resolveSibling(it) }, attributes["ctx"])

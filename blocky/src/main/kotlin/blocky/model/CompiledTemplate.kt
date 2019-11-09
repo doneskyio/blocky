@@ -38,7 +38,7 @@ internal class CompiledTemplate(
         children.filterIsInstance<ContextModifierNode>()
     }
 
-    init {
+    override fun validate() {
         if (parentRef != null) {
             check(nonPlaceholders.size == contextModifiers.size) { "If there is a parent template, only placeholders and context modifiers are supported." }
         }

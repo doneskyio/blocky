@@ -29,7 +29,7 @@ internal interface NodeBuilder {
     var parent: NodeBuilder?
     val attributes: MutableMap<String, String>
 
-    fun build(parent: Node): Node
+    fun build(parent: Node): Node?
 }
 
 internal abstract class BaseNodeBuilder : NodeBuilder {

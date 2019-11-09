@@ -20,5 +20,12 @@ import blocky.model.TextBlock
 
 internal class TextBuilder(var text: String = "") : BaseNodeBuilder() {
 
-    override fun build(parent: Node) = TextBlock(text)
+    override fun build(parent: Node): Node? {
+        val text = when { // remove new line because of block
+            text.startsWith("\n") -> text.substring(1)
+            text.startsWith("\r\n") -> text.substring(2)
+            else -> text
+        }.toByteArray(Charsets.UTF_8)
+        return if (text.isNotEmpty()) TextBlock(text) else null
+    }
 }
