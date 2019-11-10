@@ -873,6 +873,68 @@ class TemplateTests {
             """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testThirdIf() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[if [pageTitle == "A" || pageTitle == "C" || pageTitle == "D"]]
+                |D
+                |[/if]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("pageTitle" to "D"))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |D
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testThirdIf2() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[if [pageTitle == "A" || pageTitle == "C" || pageTitle == "D"]]
+                |D
+                |[else]
+                |E
+                |[/if]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("pageTitle" to "E"))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf2 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |E
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)

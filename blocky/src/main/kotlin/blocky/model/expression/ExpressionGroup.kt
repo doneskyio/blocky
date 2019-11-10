@@ -40,7 +40,7 @@ internal data class ExpressionGroup(
                         else -> return negative
                     }
                 }
-            } else if (index > 0 && !(expression.operator == Operator.Or && evaluation == EvaluationState.Equals)) {
+            } else if (index > 0 && !(expression.operator == Operator.Or && (evaluation == EvaluationState.Unknown || evaluation == EvaluationState.Equals))) {
                 return negative
             }
             lastOperator = expression.operator
