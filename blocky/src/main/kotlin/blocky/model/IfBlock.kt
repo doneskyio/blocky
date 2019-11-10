@@ -22,10 +22,24 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class IfBlock(
     children: List<Node>,
     internal val expression: Expression
-) : Block("if", children) {
+) : Block("if", children), ContextModifierNode {
 
     private val elseBlocks by lazy { children.filterIsInstance<ElseBlock>() }
     private val blocks by lazy { children.filter { it !is ElseBlock } }
+    private val modifyBlocks by lazy { children.filterIsInstance<ContextModifierNode>() }
+
+    override fun modify(context: Context) {
+        if (expression.evaluate(context)) {
+            modifyBlocks.forEach { it.modify(context) }
+        } else {
+            val done = AtomicBoolean(false)
+            elseBlocks.forEach {
+                if (done.get())
+                    return
+                it.modify(context, done)
+            }
+        }
+    }
 
     override fun write(context: Context, out: OutputStream) {
         if (expression.evaluate(context)) {
@@ -50,7 +64,7 @@ internal class ElseBlock(
     children: List<Node>,
     name: String,
     internal val expression: Expression?
-) : Block(name, children) {
+) : Block(name, children), ContextModifierNode {
 
     init {
         require(!(parent !is IfBlock && parent !is ElseBlock)) { "Else block must be from an if/else block" }
@@ -61,9 +75,25 @@ internal class ElseBlock(
 
     private val elseBlocks by lazy { children.filterIsInstance<ElseBlock>() }
     private val blocks by lazy { children.filter { it !is ElseBlock } }
+    private val modifyBlocks by lazy { children.filterIsInstance<ContextModifierNode>() }
+
+    override fun modify(context: Context) {
+        modify(context, AtomicBoolean(false))
+    }
 
     override fun write(context: Context, out: OutputStream) {
         write(context, out, AtomicBoolean(false))
+    }
+
+    internal fun modify(context: Context, done: AtomicBoolean) {
+        if (done.get())
+            return
+        if (expression == null || expression.evaluate(context)) {
+            done.set(true)
+            modifyBlocks.forEach { it.modify(context) }
+        } else {
+            elseBlocks.forEach { it.modify(context, done) }
+        }
     }
 
     internal fun write(context: Context, out: OutputStream, done: AtomicBoolean) {
