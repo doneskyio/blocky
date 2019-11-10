@@ -26,7 +26,7 @@ internal class IfBlock(
 
     private val elseBlocks by lazy { children.filterIsInstance<ElseBlock>() }
     private val blocks by lazy { children.filter { it !is ElseBlock } }
-    private val modifyBlocks by lazy { children.filterIsInstance<ContextModifierNode>() }
+    private val modifyBlocks by lazy { blocks.filterIsInstance<ContextModifierNode>() }
 
     override fun modify(context: Context) {
         if (expression.evaluate(context)) {
