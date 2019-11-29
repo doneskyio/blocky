@@ -24,30 +24,28 @@ internal data class ExpressionGroup(
 ) : Expression {
 
     enum class EvaluationState {
-        Unknown,
-        Equals
+        Equals,
+        NotEquals
     }
 
     override fun evaluate(context: Context): Boolean {
-        var evaluation = EvaluationState.Unknown
+        var lastEvaluation = EvaluationState.NotEquals
         var lastOperator = Operator.And
-        children.forEachIndexed { index, expression ->
+        children.forEach { expression ->
             if (expression.evaluate(context)) {
-                if (evaluation != EvaluationState.Equals) {
-                    evaluation = when {
-                        index == 0 -> EvaluationState.Equals
-                        lastOperator == Operator.Or -> EvaluationState.Equals
-                        else -> return negative
-                    }
-                }
-            } else if (index > 0 && !(expression.operator == Operator.Or && (evaluation == EvaluationState.Unknown || evaluation == EvaluationState.Equals))) {
+                lastEvaluation = EvaluationState.Equals
+            } else if (expression.operator == Operator.And && lastOperator != Operator.Or) {
                 return negative
             }
             lastOperator = expression.operator
         }
-        if (negative)
-            return evaluation != EvaluationState.Equals
-        return evaluation == EvaluationState.Equals
+        if (negative) {
+            lastEvaluation = when (lastEvaluation) {
+                EvaluationState.Equals -> EvaluationState.NotEquals
+                EvaluationState.NotEquals -> EvaluationState.Equals
+            }
+        }
+        return lastEvaluation == EvaluationState.Equals
     }
 
     override fun toString(): String {

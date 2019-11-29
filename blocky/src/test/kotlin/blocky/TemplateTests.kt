@@ -41,6 +41,7 @@ class TemplateTests {
         |<title>[ctx:title]</title>
         |</head>
         |<body>
+        |X = [ctx:x] 
         |[if [a == b]]
         |Hello
         |[/if]
@@ -118,6 +119,7 @@ class TemplateTests {
         |<title>Hello World</title>
         |</head>
         |<body>
+        |X =  
         |Hello title == "Hello World"
         |</body>
         |</html>
@@ -141,6 +143,7 @@ class TemplateTests {
         |<title>Hello World</title>
         |</head>
         |<body>
+        |X = 1 
         |Hello title == "Hello World"
         |Hello x == 1
         |</body>
@@ -165,8 +168,11 @@ class TemplateTests {
         |<title>Hello World</title>
         |</head>
         |<body>
+        |X = 2 
         |Hello title == "Hello World"
         |Hello x > 1
+        |Hello x > 1 || z > 1
+        |Hello x > 1 || z > 1 -- 2
         |</body>
         |</html>
         |
@@ -931,6 +937,38 @@ class TemplateTests {
         val expected =
             """
             |E
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testThirdIf3() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[if [pageTitle == "A" || pageTitle == "C" || pageTitle == "D"]]
+                |D
+                |[else]
+                |E
+                |[/if]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("pageTitle" to "A"))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf3 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |D
             |
             """.trimMargin()
         assertEquals(expected, content)

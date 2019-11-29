@@ -25,7 +25,7 @@ static getCurrentVersion() {
     if (tag != null && tag != "") {
         return tag
     }
-    return "0.0.5-SNAPSHOT"
+    return "0.0.6-SNAPSHOT"
 }
 
 allprojects {
@@ -33,6 +33,13 @@ allprojects {
     version = getCurrentVersion()
 
     repositories {
+        maven {
+            url "https://artifacts.donesky.dev/donesky-all"
+            credentials {
+                username System.getenv("donesky_nexus_username")
+                password System.getenv("donesky_nexus_password")
+            }
+        }
         mavenCentral()
         maven { url "https://dl.bintray.com/kotlin/dokka" }
         maven { url "https://dl.bintray.com/kotlin/kotlinx" }
