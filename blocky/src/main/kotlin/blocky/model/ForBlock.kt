@@ -20,13 +20,16 @@ import java.io.OutputStream
 internal class ForBlock(
     private val variableName: String,
     private val itemName: String,
+    private val indexName: String?,
     children: List<Node>
-) : Block("for", children) {
+) : Block(indexName?.let { "for:index" } ?: "for", children) {
 
     override fun write(context: Context, out: OutputStream) {
         val collection = context[variableName] as? Collection<*>
-        collection?.forEach {
-            val itemContext = context.newChildContext(mapOf(itemName to it))
+        collection?.forEachIndexed { index, any ->
+            val itemContext = context.newChildContext(
+                indexName?.let { mapOf(itemName to any, it to index) } ?: mapOf(itemName to any)
+            )
             children.forEach { child ->
                 child.write(itemContext, out)
             }

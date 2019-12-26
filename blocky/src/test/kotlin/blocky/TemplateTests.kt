@@ -973,6 +973,38 @@ class TemplateTests {
             """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testForIndex() {
+        val y = System.currentTimeMillis()
+        val template =
+            Compiler.compile(
+                Path.of("template.html"),
+                """
+                |[template]
+                |[for:index names="name"]
+                |[ctx:index] = [ctx:name]
+                |
+                |[/for:index]
+                |[/template]
+                """.trimMargin()
+            )
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("names" to listOf("Name 1", "Name 2")))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf3 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |0 = Name 1
+            |1 = Name 2
+            |
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)
