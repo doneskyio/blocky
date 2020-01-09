@@ -53,7 +53,7 @@ open class BaseContextValueComparator : ContextValueComparator {
 
     override fun compareTo(context: Context, name: String, other: Any?, comparator: Comparator): Boolean {
         val otherValue = getValue(context, other) ?: return false
-        val value = context[name] ?: return false
+        val value = context[name] ?: NullValue
         if (comparator == Comparator.Equals && value == otherValue)
             return true
         if (comparator == Comparator.NotEquals && value != otherValue)
