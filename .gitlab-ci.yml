@@ -2,6 +2,14 @@ stages:
   - test
   - publish
 
+variables:
+  GRADLE_USER_HOME: cache/.gradle
+
+cache:
+  paths:
+    - $GRADLE_USER_HOME/caches
+    - $GRADLE_USER_HOME/wrapper
+
 test:
   stage: test
   image: source.donesky.dev:4567/donesky/docker/java:12
