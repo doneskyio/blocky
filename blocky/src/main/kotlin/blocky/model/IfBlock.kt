@@ -34,8 +34,9 @@ internal class IfBlock(
         } else {
             val done = AtomicBoolean(false)
             elseBlocks.forEach {
-                if (done.get())
+                if (done.get()) {
                     return
+                }
                 it.modify(context, done)
             }
         }
@@ -47,8 +48,9 @@ internal class IfBlock(
         } else {
             val done = AtomicBoolean(false)
             elseBlocks.forEach {
-                if (done.get())
+                if (done.get()) {
                     return
+                }
                 it.write(context, out, done)
             }
         }
@@ -86,8 +88,9 @@ internal class ElseBlock(
     }
 
     internal fun modify(context: Context, done: AtomicBoolean) {
-        if (done.get())
+        if (done.get()) {
             return
+        }
         if (expression == null || expression.evaluate(context)) {
             done.set(true)
             modifyBlocks.forEach { it.modify(context) }
@@ -97,8 +100,9 @@ internal class ElseBlock(
     }
 
     internal fun write(context: Context, out: OutputStream, done: AtomicBoolean) {
-        if (done.get())
+        if (done.get()) {
             return
+        }
         if (expression == null || expression.evaluate(context)) {
             done.set(true)
             blocks.forEach { it.write(context, out) }

@@ -195,7 +195,6 @@ allprojects {
         verbose = true
         android = false
         outputToConsole = true
-        reporters = [org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN]
         ignoreFailures = false
         enableExperimentalRules = true
         filter {

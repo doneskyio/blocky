@@ -37,6 +37,9 @@ import blocky.model.expression.NumberValue
 import blocky.model.expression.Operator
 import blocky.model.expression.StringValue
 import blocky.model.expression.Value
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.nio.file.Path
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -44,9 +47,6 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
 import org.antlr.v4.runtime.tree.TerminalNode
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.nio.file.Path
 
 internal object Compiler {
 
@@ -160,8 +160,9 @@ private fun BlockyParser.BlockContext.addNodes(path: Path, parent: NodeBuilderCo
 private fun BlockyParser.BlockAttributeContext.addTo(builder: NodeBuilder) {
     val name = blockAttributeName().BLOCK_ATTRIBUTE_NAME().text
     val value = blockAttributeValue().ATTVALUE_VALUE().text
-    if (builder.attributes.containsKey(name))
+    if (builder.attributes.containsKey(name)) {
         throw CompilerException("Duplicate attribute names: $name")
+    }
     val attributeValue = value.substring(1)
     builder.attributes[name] = attributeValue.substring(0, value.length - 2)
 }

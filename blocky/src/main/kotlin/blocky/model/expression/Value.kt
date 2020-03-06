@@ -190,8 +190,9 @@ internal open class EnumValue(internal val value: Enum<*>) : Value {
     companion object {
 
         fun compareTo(value: Enum<*>, other: Any?, comparator: Comparator): Boolean {
-            if (comparator != Comparator.Equals && comparator != Comparator.NotEquals)
+            if (comparator != Comparator.Equals && comparator != Comparator.NotEquals) {
                 throw CompilerException("Unsupported comparator: $comparator")
+            }
             return when (other) {
                 is Enum<*> -> if (comparator == Comparator.Equals) value == other else value != other
                 is EnumValue -> if (comparator == Comparator.Equals) value == other.value else value != other.value

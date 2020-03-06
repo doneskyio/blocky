@@ -24,8 +24,9 @@ internal class PlaceholderRef(
 ) : Node {
 
     init {
-        if (placeholderRef == null && placeholderCtxRef == null)
+        if (placeholderRef == null && placeholderCtxRef == null) {
             throw CompilerException("placeholder or ctx is required")
+        }
     }
 
     override fun write(context: Context, out: OutputStream) {

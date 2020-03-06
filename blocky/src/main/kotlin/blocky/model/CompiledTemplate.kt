@@ -46,8 +46,9 @@ internal class CompiledTemplate(
 
     override fun write(context: Context, out: OutputStream) {
         placeholders.forEach {
-            if (!context.hasPlaceholder(it.name))
+            if (!context.hasPlaceholder(it.name)) {
                 context.setPlaceholder(it.name, it)
+            }
         }
         if (parentRef == null) {
             nonPlaceholders.forEach { it.write(context, out) }
