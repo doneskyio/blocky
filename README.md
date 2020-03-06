@@ -18,7 +18,7 @@ Default template (named `default`):
 <html>
 <head><title>Blocky Example</title></head>
 <body>
-[ref:placeholder name="body"] [[-- Escaping [] --]
+[ref:placeholder name="body"] [[-- Escaping [] --]]
 </body>
 </html>
 [/template]
