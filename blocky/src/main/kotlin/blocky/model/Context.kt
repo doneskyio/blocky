@@ -40,8 +40,9 @@ class Context(context: Map<String, Any?> = emptyMap()) {
     operator fun get(name: String): Any? {
         val path = name.split(".")
         val itemName = path.first()
-        if (!contains(itemName))
+        if (!contains(itemName)) {
             return null
+        }
         if (path.size > 1) {
             val item = internalGet(itemName) ?: return NullValue
             val bean = BeanMap[item::class]

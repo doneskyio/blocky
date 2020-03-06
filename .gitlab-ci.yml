@@ -2,24 +2,30 @@ stages:
   - test
   - publish
 
-before_script:
-  - export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-12.jdk/Contents/Home
-  - export PATH=$JAVA_HOME/bin:$PATH
-  - rm -Rf ~/.gradle
+variables:
+  GRADLE_USER_HOME: cache/.gradle
+
+cache:
+  paths:
+    - $GRADLE_USER_HOME/caches
+    - $GRADLE_USER_HOME/wrapper
 
 test:
   stage: test
+  image: source.donesky.dev:4567/donesky/docker/java:12
   tags:
-    - macos
-  before_script:
-    - java -version
+    - docker
   script:
-    - ./gradlew --refresh-dependencies --no-daemon --no-build-cache -Dkotlin.compiler.execution.strategy="in-process" clean check codeCoverageReport
+    - ./gradlew --no-daemon check codeCoverageReport
     - cat build/reports/jacoco/codeCoverageReport/html/index.html | grep -o '<tfoot>.*</tfoot>'
 
 publish:
   stage: publish
+  image: source.donesky.dev:4567/donesky/docker/java:12
   tags:
-    - macos
+    - docker
   script:
-    - ./gradlew --refresh-dependencies --no-daemon --no-build-cache -Dkotlin.compiler.execution.strategy="in-process" clean publish
+    - ./gradlew --no-daemon clean publish
+  only:
+    - master
+    - integration

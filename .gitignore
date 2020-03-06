@@ -11,3 +11,4 @@ target
 /assets
 /core/assets
 BlockyLexer.tokens
+local.properties

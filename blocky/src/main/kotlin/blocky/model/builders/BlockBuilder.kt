@@ -91,7 +91,14 @@ internal open class BlockBuilder(private val path: Path) : NodeBuilder, NodeBuil
             name == "for" -> {
                 val children = mutableListOf<Node>()
                 val variableName = attributes.entries.first()
-                val block = ForBlock(variableName.key, variableName.value, children)
+                val block = ForBlock(variableName.key, variableName.value, null, children)
+                block.build(children)
+                block
+            }
+            name == "for:index" -> {
+                val children = mutableListOf<Node>()
+                val variableName = attributes.entries.first()
+                val block = ForBlock(variableName.key, variableName.value, "index", children)
                 block.build(children)
                 block
             }

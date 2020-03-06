@@ -84,6 +84,7 @@ BLOCK_NAME
     | 'placeholder'
     | 'if'
     | 'for'
+    | 'for:index'
     ;
 
 BLOCK_ATTRIBUTE_NAME

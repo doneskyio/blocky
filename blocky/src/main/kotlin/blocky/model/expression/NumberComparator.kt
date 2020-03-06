@@ -42,10 +42,11 @@ fun Number.compareTo(other: Number): Int = when (this) {
     is Short -> compareTo(other.toShort())
     is Byte -> compareTo(other.toByte())
     is BigDecimal -> {
-        if (other is BigDecimal)
+        if (other is BigDecimal) {
             compareTo(other)
-        else
+        } else {
             TODO("Unsupported $this compareTo $other")
+        }
     }
     else -> TODO("Unsupported $this compareTo $other")
 }

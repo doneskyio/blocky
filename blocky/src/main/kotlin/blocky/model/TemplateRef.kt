@@ -27,8 +27,9 @@ internal class TemplateRef(
 ) : Node {
 
     init {
-        if (templateRef == null && templateCtxRef == null)
+        if (templateRef == null && templateCtxRef == null) {
             throw CompilerException("placeholder or ctx is required")
+        }
     }
 
     override fun write(context: Context, out: OutputStream) {
