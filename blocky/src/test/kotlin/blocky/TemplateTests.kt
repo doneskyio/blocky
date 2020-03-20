@@ -1005,6 +1005,44 @@ class TemplateTests {
             """.trimMargin()
         assertEquals(expected, content)
     }
+
+    @Test
+    fun testIfWithContextSet() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(Path.of("template.html"), "[template][if [x != null]][ctx:x][else]nope[/if][/template]")
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(mapOf("x" to "hello"))
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf3 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |hello
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
+
+    @Test
+    fun testIfWithContextSet2() {
+        val y = System.currentTimeMillis()
+        val template = Compiler.compile(Path.of("template.html"), "[template][if [x != null]][ctx:x][else]nope[/if][/template]")
+        println("Compile MS: ${System.currentTimeMillis() - y}")
+        val context = Context(emptyMap())
+        val content = ByteArrayOutputStream().use {
+            val x = System.currentTimeMillis()
+            template.write(context, it)
+            println("testThirdIf3 - Write MS: ${System.currentTimeMillis() - x}")
+            it.toString()
+        }
+        val expected =
+            """
+            |nope
+            """.trimMargin()
+        assertEquals(expected, content)
+    }
 }
 
 data class TestObject(val name: String)
