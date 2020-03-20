@@ -12,7 +12,7 @@ cache:
 
 test:
   stage: test
-  image: source.donesky.dev:4567/donesky/docker/java:12
+  image: source.donesky.dev:4567/donesky/docker/java:13
   tags:
     - docker
   script:
@@ -21,7 +21,7 @@ test:
 
 publish:
   stage: publish
-  image: source.donesky.dev:4567/donesky/docker/java:12
+  image: source.donesky.dev:4567/donesky/docker/java:13
   tags:
     - docker
   script:

@@ -26,14 +26,15 @@ internal interface Value {
 
 internal object NullValue : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = other == this
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) =
+        if (comparator == Comparator.Equals) other == this else other != this
 
     override fun toString(): String = "null"
 }
 
 internal class BooleanValue(internal val value: Boolean) : Value {
 
-    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other)
+    override fun compareTo(context: Context, other: Any?, comparator: Comparator) = compareTo(value, other, comparator)
 
     override fun toString(): String = value.toString()
 
@@ -54,9 +55,9 @@ internal class BooleanValue(internal val value: Boolean) : Value {
 
     companion object {
 
-        fun compareTo(value: Boolean, other: Any?) = when (other) {
-            is BooleanValue -> value == other.value
-            is Boolean -> value == other
+        fun compareTo(value: Boolean, other: Any?, comparator: Comparator) = when (other) {
+            is BooleanValue -> if (comparator == Comparator.Equals) value == other.value else value != other.value
+            is Boolean -> if (comparator == Comparator.Equals) value == other else value != other
             else -> false
         }
     }

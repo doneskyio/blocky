@@ -42,8 +42,8 @@ open class BaseContextValueComparator : ContextValueComparator {
             is StringValue -> StringValue.compareTo(value.value, otherValue, comparator)
             is Number -> NumberValue.compareTo(value, otherValue, comparator)
             is NumberValue<*> -> NumberValue.compareTo(value.value, otherValue, comparator)
-            is Boolean -> BooleanValue.compareTo(value, otherValue)
-            is BooleanValue -> BooleanValue.compareTo(value.value, otherValue)
+            is Boolean -> BooleanValue.compareTo(value, otherValue, comparator)
+            is BooleanValue -> BooleanValue.compareTo(value.value, otherValue, comparator)
             is Date -> DateValue.compareTo(value, otherValue, comparator)
             is DateValue -> DateValue.compareTo(value.value, otherValue, comparator)
             is Enum<*> -> EnumValue.compareTo(value, otherValue, comparator)
@@ -54,12 +54,6 @@ open class BaseContextValueComparator : ContextValueComparator {
     override fun compareTo(context: Context, name: String, other: Any?, comparator: Comparator): Boolean {
         val otherValue = getValue(context, other) ?: return false
         val value = context[name] ?: NullValue
-        if (comparator == Comparator.Equals && value == otherValue) {
-            return true
-        }
-        if (comparator == Comparator.NotEquals && value != otherValue) {
-            return true
-        }
         if (value == NullValue || otherValue == NullValue) {
             return false
         }
