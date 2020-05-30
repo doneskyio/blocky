@@ -1,6 +1,6 @@
 dist: bionic
 language: java
-jdk: openjdk12
+jdk: openjdk11
 
 install:
   - java --version
